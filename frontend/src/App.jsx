@@ -1,21 +1,21 @@
 import React, { useState } from 'react'
 import { Routes, Route, useLocation} from "react-router";
-//import { useAuthStore } from "./store/authStore.js"
+import { useAuthStore } from "./store/authStore.js"
 
 import Navbar from './component/Navbar.jsx'
 import Homepage from './page/Homepage.jsx'
-//import LoginPage from './page/LoginPage.jsx'
-//import SignupPage from './page/SignupPage.jsx'
-//import Dashboard from './page/Dashboard.jsx'
+import LoginPage from './page/LoginPage.jsx'
+import SignupPage from './page/SignupPage.jsx'
+import Dashboard from './page/Dashboard.jsx'
 
-/****
+
 
 const ProtectedRoutes = ({ children }) =>{
-  const { isAuthenticated, user } = useAuthStore()
+  const { isAuthenticated } = useAuthStore()
   
   
   if(!isAuthenticated){
-    return <Navigate to="/account/login" replace />
+    return <Navigate to="/login" replace />
   }
   
 
@@ -29,16 +29,16 @@ const RedirectAuthenticatedUser = ({ children }) =>{
 
   
   if(isAuthenticated){
-    return <Navigate to="/account/dashboard" replace />
+    return <Navigate to="/dashboard" replace />
   }
   return children
 }
 
-***/
+
 
 const App = () =>{
   
-  //const { isAuthenticated, user } = useAuthStore()
+  const { isAuthenticated, user } = useAuthStore()
   
 
   const pathname= useLocation().pathname
@@ -49,14 +49,15 @@ const App = () =>{
   return(
     <div className="font-[Outfit] bg-gray-300">
       
-      {!isMatch && <Navbar />}
+      {!isMatch && <Navbar { ...user } />}
       <Routes>
         <Route path="/" element={<Homepage />} />
-        {/***}
-        <Route path="/account/login" element={<LoginPage />} />
-        <Route path="/account/signup" element={<SignupPage />} />
-        <Route path="/account/dashboard" element={<Dashboard />} />
-        ***/}
+      
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+                
+        <Route path="/dashboard" element={<Dashboard />} />
+
       </Routes>
       
     </div>

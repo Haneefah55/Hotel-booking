@@ -4,10 +4,10 @@ import profileImage from "../assets/profile.png"
 import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
 import { Link } from 'react-router'
-import { useAuthStore } from "../store/authStore.js"
+//import { useAuthStore } from "../store/authStore.js"
 
 
-const Navbar = () => {
+const Navbar = ({ ...user }) => {
   const navLinks = [
       { name: 'Home', path: '/' },
       { name: 'Hotel', path: '/hotel' },
@@ -15,7 +15,7 @@ const Navbar = () => {
       { name: 'Contact', path: '/contact' },
   ]
 
-  const { isAuthenticated, user } = useAuthStore()
+  //const { isAuthenticated, user } = useAuthStore()
   
   const pics = user.image
 
@@ -64,15 +64,18 @@ const Navbar = () => {
         {/* Desktop Right */}
         <div className="hidden md:flex items-center gap-4">
           
-            {isAuthenticated ? <Link to="/account/dashboard">
+            {/***<Link to="/account/dashboard">
                 <img src={pics ? pics : profileImage} className="size-8 rounded-full object-cover border-2 border-purple-600" 
                 />
                 </Link> : <Link to="/account/login" className={` font-bold transition-all border-2 p-2 text-md duration-500 ${isScrolled ? "text-amber-800 border-amber-800 hover:bg-amber-800 hover:text-gray-100  " : "text-gray-100 border-gray-100 hover:bg-gray-100 hover:text-amber-800"}`}>
                 Login
                 </Link>
               
-            }
-            
+           **/ }
+            <Link to="/login" className={` font-bold transition-all border-2 p-2 text-md duration-500 ${isScrolled ? "text-amber-800 border-amber-800 hover:bg-amber-800 hover:text-gray-100  " : "text-gray-100 border-gray-100 hover:bg-gray-100 hover:text-amber-800"}`}>
+                Login
+            </Link>
+          
         </div>
 
         {/* Mobile Menu Button */}
@@ -81,13 +84,16 @@ const Navbar = () => {
           <Menu onClick={() => setIsMenuOpen(!isMenuOpen)} className={`h-10 w-10 cursor-pointer text-amber-800 `} 
           />
         
-          {isAuthenticated ? <Link to="/account/dashboard"> <img src={pics ? pics : profileImage} className="size-8 rounded-full object-cover border-2 border-purple-600" /> </Link> : <Link to="/account/login" className={` font-bold transition-all border-2 p-2 text-md duration-500 ${isScrolled ? "text-amber-800 border-amber-800 hover:bg-amber-800 hover:text-gray-100  " : "text-gray-100 border-gray-100 hover:bg-gray-100 hover:text-amber-800"}`}>
+          { /*** <Link to="/account/dashboard"> <img src={pics ? pics : profileImage} className="size-8 rounded-full object-cover border-2 border-gray-100" /> </Link> : <Link to="/account/login" className={` font-bold transition-all border-2 p-2 text-md duration-500 ${isScrolled ? "text-amber-800 border-amber-800 hover:bg-amber-800 hover:text-gray-100  " : "text-gray-100 border-gray-100 hover:bg-gray-100 hover:text-amber-800"}`}>
                 Login
               </Link>
               
-          }
-            
-    
+        **/  }
+            <Link to="/login" className={` font-bold transition-all border-2 p-2 text-md duration-500 ${isScrolled ? "text-amber-800 border-amber-800 hover:bg-amber-800 hover:text-gray-100  " : "text-gray-100 border-gray-100 hover:bg-gray-100 hover:text-amber-800"}`}>
+                Login
+              </Link>
+              
+  
         </div>
 
         {/* Mobile Menu */}

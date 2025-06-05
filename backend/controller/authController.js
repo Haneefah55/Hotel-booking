@@ -57,7 +57,7 @@ export const registerUser = async (req, res) =>{
         fullName: user.fullName,
         email: user.email,
         role: user.role,
-        image: user.images,
+        image: user.image,
       },
       
     })
@@ -101,6 +101,7 @@ export const registerOwner = async (req, res) =>{
       fullName,
       email,
       password: hashedPassword,
+      
     
     })
     
@@ -118,7 +119,7 @@ export const registerOwner = async (req, res) =>{
         fullName: owner.fullName,
         email: owner.email,
         role: owner.role,
-        image: owner.images,
+        image: owner.image,
       },
     })
     
@@ -144,13 +145,14 @@ export const loginUser = async (req, res) =>{
     if(!isPasswordValid){
       return res.status(400).json({success: false, message: "Incorrect password"})
     }
-    
-    
-    generateTokenAndSetCookie(res, user._id)
+  
     
     user.role = "guest"
     
     await user.save()
+    
+    
+    generateTokenAndSetCookie(res, user._id, user.role)
     res.status(200).json({
       userId: user._id,
       fullName: user.fullName,
@@ -177,18 +179,19 @@ export const loginOwner = async (req, res) =>{
     if(!owner){
       return res.status(400).json({success: false, message: "Invalid email"})
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password)
+    const isPasswordValid = await bcrypt.compare(password, owner.password)
     if(!isPasswordValid){
       return res.status(400).json({success: false, message: "Incorrect password"})
     }
     
     
-    generateTokenAndSetCookie(res, owner._id)
+    
     
     owner.role = "owner"
     
     await owner.save()
     
+    generateTokenAndSetCookie(res, owner._id, owner.role)
     res.status(200).json({
       ownerId: owner._id,
       fullName: owner.fullName,
@@ -220,9 +223,10 @@ export const loginAdmin = async (req, res) =>{
     if(!isPasswordValid){
       return res.status(400).json({success: false, message: "Incorrect username or password"})
     }
+    admin.role = 'admin'
+    await admin.save()
     
-    
-    generateTokenAndSetCookie(res, admin._id)
+    generateTokenAndSetCookie(res, admin._id, admin.role)
     
   
     
@@ -230,7 +234,7 @@ export const loginAdmin = async (req, res) =>{
     res.status(200).json({
       adminId: admin._id,
       username: admin.username,
-      role: "admin",
+      role: admin.role,
     
     })
     
@@ -261,7 +265,7 @@ export const changeUserPassword = async (req, res) =>{
   
   try {
     const { oldPassword, newPassword } = req.body
-    const { userId } = req.params
+    const { id } = req.params
     if(!oldPassword){
       return res.status(400).json({success: false, message: "Please enter the old password"})
     }
@@ -271,7 +275,7 @@ export const changeUserPassword = async (req, res) =>{
     }
   
   
-    const user = await User.findOne({ userId })
+    const user = await User.findOne({ id })
   
     if(!user){
       return res.status(400).json({success: false, message: "User not found"})
@@ -383,8 +387,8 @@ export const updateUser = async(req, res) =>{
     res.status(400).json({success: false, message: error.message, error: "Internal error"})
   }
 }
-/****
-export const checkAuth = asyncHandler(async (req, res) =>{
+/***
+export const checkAuth = async (req, res) =>{
   try{
     const user = await User.findById(req.userId).select("-password")
     if(!user) return res.status(400).json({success: false, message: "User not found"})
@@ -396,13 +400,90 @@ export const checkAuth = asyncHandler(async (req, res) =>{
         fullName: user.fullName,
         email: user.email,
         role: user.role,
-        image: user.images,
+        image: user.image,
       }
     })
   } catch (error) {
 
     res.status(400).json({success: false, message: error.message})
   }
-})
-
+}
 ***/
+
+export const checkLogin = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'User not authenticated' })
+  }
+
+  const { id, role } = req.user
+
+  if (role === 'guest') {
+    const user = await User.findById(id).select("-password")
+    
+    if(!user) return res.status(400).json({success: false, message: "User not found"})
+    
+    return res.status(200).json({
+      success: true,
+      message: "User Authenticated",
+      user: {
+        userId: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+        image: user.image,
+      }
+    })
+ 
+  } else if (role === 'owner') {
+    const owner = await Owner.findById(id).select("-password")
+    if(!owner) return res.status(400).json({success: false, message: "Host not found"})
+    
+    return res.status(200).json({
+      success: true,
+      message: "Host Authenticated",
+      owner: {
+        ownerId: owner._id,
+        fullName: owner.fullName,
+        email: owner.email,
+        role: owner.role,
+        image: owner.image,
+      }
+    })
+    
+  } else if (role === 'admin') {
+    const admin = await Admin.findById(id).select("-password")
+    if(!admin) return res.status(400).json({success: false, message: "Host not found"})
+    
+    return res.status(200).json({
+      success: true,
+      message: "Admin Authenticated",
+      owner: {
+        adminId: admin._id,
+        username: admin.username,
+        role: admin.role,
+        image: admin.image,
+      }
+    })
+  
+  } else {
+    return res.status(403).json({ message: 'Not Authenticated' })
+  }
+}
+/***
+
+
+export const checkLogin = async(req, res) => {
+  try{
+    
+    if (!req.user) {
+    return res.status(401).json({ message: 'Not logged in' })
+    }
+
+    res.status(200).json({ user: req.user }) // This should be the user from JWT or session
+  } catch (error) {
+    res.status(400).json({success: false, message: error.message})
+    
+  }
+  
+}
+**/

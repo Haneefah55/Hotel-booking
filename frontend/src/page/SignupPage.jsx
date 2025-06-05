@@ -63,10 +63,10 @@ const SignupPage = () =>{
   const handleOwnerSignup = async(e) =>{
     e.preventDefault()
     try{
-      await ownerSignup(guestFullName, guestEmail, guestPassword)
+      await ownerSignup(hostFullName, hostEmail, hostPassword)
       handleOpen()
       setTimeout(() =>{
-        navigate("/account/login")
+        navigate("/login")
       }, 3000)
     } catch (error) {
       alert(error)
@@ -82,7 +82,7 @@ const SignupPage = () =>{
       await userSignup(guestFullName, guestEmail, guestPassword)
       handleOpen()
       setTimeout(() =>{
-        navigate("/account/login")
+        navigate("/login")
       }, 3000)
     } catch (error) {
       alert(error)
@@ -138,13 +138,13 @@ const SignupPage = () =>{
               
               <div className="flex items-center my-4 border bg-amber-500/5 border-amber-800/10 rounded gap-2 pl-2">
                 <User className="h-10" />
-                <input className="w-full outline-none bg-transparent text-gray-800 py-2.5" type="text" placeholder="Full Name" required onChange={(e) => (setHostFullName(e.target.value))} /> .
+                <input className="w-full outline-none bg-transparent text-gray-800 py-2.5" type="text" placeholder="Full Name" required onChange={(e) => (setHostFullName(e.target.value))} /> 
                 
               </div>
               
               <div className="flex items-center my-4 border bg-amber-500/5 border-amber-800/10 rounded gap-2 pl-2">
                 <Mail className="h-10" />
-                <input className="w-full outline-none bg-transparent text-gray-800 py-2.5" type="email" placeholder="Email" required onChange={(e) => (setHostEmail(e.target.value))} /> .
+                <input className="w-full outline-none bg-transparent text-gray-800 py-2.5" type="email" placeholder="Email" required onChange={(e) => (setHostEmail(e.target.value))} /> 
                 
               </div>
               <div className="flex items-center my-4 border relative bg-amber-500/5 border-amber-800/10 rounded gap-2 pl-2">
@@ -158,7 +158,7 @@ const SignupPage = () =>{
               </div>
               { error && <p className="text-center text-sm text-red-500">{error}</p>}
               <button className="w-full mb-3 bg-amber-800 hover:bg-amber-950 transition-all active:scale-95 py-2.5 rounded text-gray-100 font-medium">{isLoading ? <Loader className="animate-spin h-15 text-gray-100 mx-auto" /> : "Sign Up"}</button>
-              <p class="text-center mt-4">Already have an account? <Link to="/account/login" class="text-blue-500 underline">Login</Link></p>
+              <p class="text-center mt-4">Already have an account? <Link to="/login" class="text-blue-500 underline">Login</Link></p>
             </form>
           </div>
           
@@ -190,7 +190,7 @@ const SignupPage = () =>{
               </div>
                { error && <p className="text-center text-sm text-red-500">{error}</p>}
               <button className="w-full mb-3 bg-amber-800 hover:bg-amber-950 transition-all active:scale-95 py-2.5 rounded text-gray-100 font-medium">{isLoading ? <Loader className="animate-spin h-15 text-gray-100 mx-auto" /> : "Sign Up"}</button>
-              <p class="text-center mt-4">Don't have an account? <Link to="/account/login" class="text-blue-500 underline">Login</Link></p>
+              <p class="text-center mt-4">Don't have an account? <Link to="/login" class="text-blue-500 underline">Login</Link></p>
             </form>
           </div>
           

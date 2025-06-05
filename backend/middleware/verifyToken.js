@@ -9,7 +9,7 @@ export const verifyToken = (req, res, next) =>{
     const decode = jwt.verify(token, process.env.JWT_SECRET)
     if (!decode) return res.status(401).json({success: false, message: "Unauthorized - Invalid token"})
     
-    req.id = decode.id
+    req.user = decode
     
     next()
   } catch (error) {
