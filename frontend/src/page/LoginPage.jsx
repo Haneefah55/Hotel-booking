@@ -47,7 +47,7 @@ const LoginPage = () =>{
   const { userLogin, ownerLogin, isLoading, error } = useAuthStore()
 
   
- const navigate = useNavigate()
+  const navigate = useNavigate()
   const [isVisible, setIsVisible] = useState(false)
     
   
@@ -71,7 +71,7 @@ const LoginPage = () =>{
       await ownerLogin (hostEmail, hostPassword, role)
       handleOpen()
       setTimeout(() =>{
-        navigate("/dashboard")
+        navigate("/owner")
       }, 3000)
     } catch (error) {
       alert(error)
@@ -92,7 +92,7 @@ const LoginPage = () =>{
       await userLogin (guestEmail, guestPassword, role)
       handleOpen()
       setTimeout(() =>{
-        navigate("/dashboard")
+        navigate("/guest")
       }, 3000)
     } catch (error) {
       alert(error)
@@ -163,7 +163,7 @@ const LoginPage = () =>{
                
               </div>
               
-              <button className="w-full mb-3 bg-amber-800 hover:bg-amber-950 transition-all active:scale-95 py-2.5 rounded text-gray-100 font-medium">{isLoading ? <Loader /> : "Login"}</button>
+              <button className="w-full mb-3 bg-amber-800 hover:bg-amber-950 transition-all active:scale-95 py-2.5 rounded text-gray-100 font-medium">{isLoading ? <Loader className="animate-spin h-15 text-gray-100 mx-auto"  /> : "Login"}</button>
               <p class="text-center mt-4">Don't have an account? <Link to="/signup" class="text-blue-500 underline">Sign Up</Link></p>
             </form>
           </div>
@@ -188,7 +188,7 @@ const LoginPage = () =>{
                
               </div>
               
-              <button className="w-full mb-3 bg-amber-800 hover:bg-amber-950 transition-all active:scale-95 py-2.5 rounded text-gray-100 font-medium">{isLoading ? <Loader /> : "Login"}</button>
+              <button className="w-full mb-3 bg-amber-800 hover:bg-amber-950 transition-all active:scale-95 py-2.5 rounded text-gray-100 font-medium">{isLoading ? <Loader className="animate-spin h-15 text-gray-100 mx-auto"  /> : "Login"}</button>
               <p class="text-center mt-4">Don't have an account? <Link to="/signup" class="text-blue-500 underline">Sign Up</Link></p>
             </form>
           </div>

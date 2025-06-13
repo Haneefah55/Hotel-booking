@@ -4,14 +4,14 @@ import { config } from "dotenv"
 
 export const generateTokenAndSetCookie = (res, id, role) =>{
   const token = jwt.sign({ id, role }, process.env.JWT_SECRET, {
-    expiresIn: "7d"
+    expiresIn: "3d"
   })
   
   res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: 3 * 24 * 60 * 60 * 1000,
   })
   
   return token

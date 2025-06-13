@@ -15,7 +15,11 @@ const adminSchema = new mongoose.Schema({
   role: {
     type: String,
     default: "admin"
-  }
+  },
+  image: {
+    type: String, // array of image URLs
+    default: "",
+  },
   
 
 }, { timestamps: true } );

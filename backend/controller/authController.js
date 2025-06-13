@@ -45,7 +45,7 @@ export const registerUser = async (req, res) =>{
     
     await user.save()
     //jwt
-    generateTokenAndSetCookie(res, user._id)
+    generateTokenAndSetCookie(res, user._id, user.role)
     
     
     
@@ -101,13 +101,14 @@ export const registerOwner = async (req, res) =>{
       fullName,
       email,
       password: hashedPassword,
+      role: "owner"
       
     
     })
     
     await owner.save()
     //jwt
-    generateTokenAndSetCookie(res, owner._id)
+    generateTokenAndSetCookie(res, owner._id, owner.role)
     
     
     
@@ -159,6 +160,8 @@ export const loginUser = async (req, res) =>{
       email: user.email,
       role: user.role,
       image: user.image,
+  
+      
     })
     
     console.log("user login successfully")
@@ -193,11 +196,12 @@ export const loginOwner = async (req, res) =>{
     
     generateTokenAndSetCookie(res, owner._id, owner.role)
     res.status(200).json({
-      ownerId: owner._id,
+      userId: owner._id,
       fullName: owner.fullName,
       email: owner.email,
       role: owner.role,
       image: owner.image,
+
     })
     
     console.log("host login successfully")
@@ -232,9 +236,12 @@ export const loginAdmin = async (req, res) =>{
     
     
     res.status(200).json({
-      adminId: admin._id,
+      
+      userId: admin._id,
       username: admin.username,
       role: admin.role,
+      image: admin.image
+      
     
     })
     
@@ -256,6 +263,7 @@ export const logout = async (req, res) =>{
   })
   
   res.status(200).json({success: true, message: "User logout successfully"})
+  console.log("user logout successfully")
   
 }
 
@@ -387,6 +395,10 @@ export const updateUser = async(req, res) =>{
     res.status(400).json({success: false, message: error.message, error: "Internal error"})
   }
 }
+
+
+
+
 /***
 export const checkAuth = async (req, res) =>{
   try{
@@ -423,15 +435,12 @@ export const checkLogin = async (req, res) => {
     if(!user) return res.status(400).json({success: false, message: "User not found"})
     
     return res.status(200).json({
-      success: true,
-      message: "User Authenticated",
-      user: {
-        userId: user._id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role,
-        image: user.image,
-      }
+      userId: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      role: user.role,
+      image: user.image,
+      
     })
  
   } else if (role === 'owner') {
@@ -439,15 +448,13 @@ export const checkLogin = async (req, res) => {
     if(!owner) return res.status(400).json({success: false, message: "Host not found"})
     
     return res.status(200).json({
-      success: true,
-      message: "Host Authenticated",
-      owner: {
-        ownerId: owner._id,
-        fullName: owner.fullName,
-        email: owner.email,
-        role: owner.role,
-        image: owner.image,
-      }
+      
+      userId: owner._id,
+      fullName: owner.fullName,
+      email: owner.email,
+      role: owner.role,
+      image: owner.image,
+    
     })
     
   } else if (role === 'admin') {
@@ -455,14 +462,12 @@ export const checkLogin = async (req, res) => {
     if(!admin) return res.status(400).json({success: false, message: "Host not found"})
     
     return res.status(200).json({
-      success: true,
-      message: "Admin Authenticated",
-      owner: {
-        adminId: admin._id,
-        username: admin.username,
-        role: admin.role,
-        image: admin.image,
-      }
+      
+      userId: admin._id,
+      username: admin.username,
+      role: admin.role,
+      image: admin.image,
+      
     })
   
   } else {

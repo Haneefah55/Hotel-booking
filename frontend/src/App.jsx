@@ -1,20 +1,61 @@
-import React, { useState } from 'react'
-import { Routes, Route, useLocation} from "react-router";
-import { useAuthStore } from "./store/authStore.js"
 
+import { useAuthStore } from "./store/authStore.js"
 import Navbar from './component/Navbar.jsx'
+
+import React, { useState, useEffect } from 'react'
+import { Routes, Route, useLocation} from "react-router";
 import Homepage from './page/Homepage.jsx'
+
+
+
 import LoginPage from './page/LoginPage.jsx'
 import SignupPage from './page/SignupPage.jsx'
-import Dashboard from './page/Dashboard.jsx'
+import { Navigate } from 'react-router'
+
+
+import GuestLayout from './layouts/GuestLayout.jsx'
+import GuestDashboard from './page/guest/GuestDashboard.jsx'
+
+ 
+
+import OwnerLayout from './layouts/OwnerLayout.jsx'
+import OwnerDashboard from './page/owner/OwnerDashboard.jsx'
+import AddHotel from './page/owner/AddHotel.jsx'
+import AddRoom from './page/owner/AddRoom.jsx'
+import HotelList from './page/owner/HotelList.jsx'
+import RoomList from './page/owner/RoomList.jsx'
+
+import AdminLayout from './layouts/AdminLayout.jsx'
+import AdminDashboard from './page/admin/AdminDashboard.jsx'
+import AdminLogin from './page/admin/AdminLogin.jsx'
 
 
 
-const ProtectedRoutes = ({ children }) =>{
-  const { isAuthenticated } = useAuthStore()
+const ProtectedRoutes = ({ allowedRole, children }) =>{
+  const { user } = useAuthStore()
   
+  //window.alert(JSON.stringify(user))
+  if(!user){
+    return <Navigate to="/login" replace />
+  }
+  if(!allowedRole.includes(user.role)){
+    return <Navigate to="/login" replace />
+  }
   
-  if(!isAuthenticated){
+
+  
+  return children
+} 
+
+
+const ProtectAdminRoutes = ({ allowedRole, children }) =>{
+  const { user } = useAuthStore()
+  
+  //window.alert(JSON.stringify(user))
+  if(!user){
+    return <Navigate to="/login-admin" replace />
+  }
+  if(!allowedRole.includes(user.role)){
     return <Navigate to="/login" replace />
   }
   
@@ -29,7 +70,7 @@ const RedirectAuthenticatedUser = ({ children }) =>{
 
   
   if(isAuthenticated){
-    return <Navigate to="/dashboard" replace />
+    return <Navigate to="/" replace />
   }
   return children
 }
@@ -37,29 +78,97 @@ const RedirectAuthenticatedUser = ({ children }) =>{
 
 
 const App = () =>{
+
   
-  const { isAuthenticated, user } = useAuthStore()
+  const { checkAuth, user, isAuthenticated } = useAuthStore()
   
 
   const pathname= useLocation().pathname
-  const matchPaths = ['/dashboard', '/login', '/signup'];
+  const matchPaths = ['/login', '/signup'];
 
   const isMatch = matchPaths.some(path => pathname.includes(path));
-  
+  //const user = null
+    
+
+  useEffect(() => {
+    checkAuth()
+    //window.alert(JSON.stringify(user))
+  }, [])
+
   return(
-    <div className="font-[Outfit] bg-gray-300">
-      
-      {!isMatch && <Navbar { ...user } />}
+    
+    <div className="font-[Outfit] w-screen h-screen bg-gray-100 " >
+
+     {!isMatch && <Navbar user = {user} />} 
+     
+
+           
       <Routes>
         <Route path="/" element={<Homepage />} />
-      
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-                
-        <Route path="/dashboard" element={<Dashboard />} />
+                 
+        <Route path="/login" element={
+          <RedirectAuthenticatedUser>
+            <LoginPage />
+          </RedirectAuthenticatedUser>
+        } />
+        
+        <Route path="/signup" element={
+          <RedirectAuthenticatedUser>
+            <SignupPage />
+          </RedirectAuthenticatedUser>
+        
+          
+        } />
+        
+        {/** Guest **/}
+        
+        <Route path="/guest" element={
+          <ProtectedRoutes allowedRole={["guest"]}>
+            <GuestLayout />
+          </ProtectedRoutes>
+        }>
+          <Route index element ={<GuestDashboard />} />
+          <Route path="bookings" element={<div>my bookings</div>} />
+        
+        </Route>
+        
+             {/** Owner **/}
+            
+        <Route path="/owner" element={
+          <ProtectedRoutes allowedRole={["owner"]}>
+            <OwnerLayout />
+          </ProtectedRoutes>
+        }>
+          <Route index element ={<OwnerDashboard />} />
+          <Route path="hotel" element={<HotelList />} />
+          <Route path="room" element={<RoomList />} />
+          <Route path="add-room" element={<AddRoom />} />
+          <Route path="add-hotel" element={<AddHotel />} />
+        </Route>
+        
+
+        
+        {/** Admin **/}
+
+              
+        <Route path="/login-admin" element={<AdminLogin />} />
+        
+               
+
+        <Route path="/admin" element={
+          <ProtectAdminRoutes allowedRole={["admin"]}>
+            <AdminLayout />
+          </ProtectAdminRoutes>
+        }>
+          <Route index element ={<AdminDashboard />} />
+          <Route path="bookings" element={<div>my bookings</div>} />
+        
+        </Route>
+                             
 
       </Routes>
       
+
     </div>
   
   

@@ -10,22 +10,8 @@ const hotelSchema = new mongoose.Schema({
     required: true,
   },
   address: {
-    street: String,
-    city: String,
-    state: String,
-    country: String,
-    postalCode: String,
-  },
-  location: {
-    // optional: for geo queries or maps
-    lat: {
-      type: Number,
-      default: null,
-    },
-    lng: {
-      type: Number,
-      default: null,
-    },
+    type: String,
+    required: true,
   },
   amenities: {
     type: [String],
@@ -39,7 +25,7 @@ const hotelSchema = new mongoose.Schema({
   
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // or "Owner" if you use a separate model
+    ref: "Owner", // or "Owner" if you use a separate model
     required: true,
     default: null,
   },
@@ -69,10 +55,7 @@ const hotelSchema = new mongoose.Schema({
     type: Boolean,
     default: false, // for admin approval before listing
   },
-  available: {
-    type: Boolean,
-    default: false, // for user checking if available before booking
-  },
+  
   
 }, { timestamps: true } );
 

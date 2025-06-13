@@ -4,7 +4,12 @@ import Owner from "../model/ownerModel.js"
 import Room from "../model/roomModel.js"
 
 export const addHotel = async(req, res) =>{
-  const { name, description, address, amenities } = req.body
+  const { name, description, address, amenities, images } = req.body
+  
+  
+    
+  const uploadResponse = await cloudinary.uploader.upload(images)
+  const imgUrl = uploadResponse.secure_url
   
   const { ownerId }= req.params
   try {
@@ -27,6 +32,7 @@ export const addHotel = async(req, res) =>{
       description,
       address,
       amenities,
+      images: imgUrl,
       owner: hotelOwner._id,
       
       
@@ -41,7 +47,6 @@ export const addHotel = async(req, res) =>{
       address: hotel.address,
       amenities: hotel.amenities,
       image: hotel.images,
-      location: hotel.location,
       owner: hotel.owner,
       rating: hotel.rating,
       reviews: hotel.reviews,
