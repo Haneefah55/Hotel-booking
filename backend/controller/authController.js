@@ -45,23 +45,16 @@ export const registerUser = async (req, res) =>{
     
     await user.save()
     //jwt
-    generateTokenAndSetCookie(res, user._id, user.role)
+   // generateTokenAndSetCookie(res, user._id, user.role)
     
     
     
     res.status(200).json({
       success: true,
       message: "User created successfully",
-      user: {
-        userId: user._id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role,
-        image: user.image,
-      },
-      
+
     })
-    console.log("user created successfully")
+    console.log("user created successfully", user._id)
     
     
   } catch (error) {
@@ -102,28 +95,21 @@ export const registerOwner = async (req, res) =>{
       email,
       password: hashedPassword,
       role: "owner"
-      
     
     })
     
     await owner.save()
     //jwt
-    generateTokenAndSetCookie(res, owner._id, owner.role)
+   // generateTokenAndSetCookie(res, owner._id, owner.role)
     
     
     
     res.status(200).json({
       success: true,
       message: "Host created successfully",
-      owner: {
-        ownerId: owner._id,
-        fullName: owner.fullName,
-        email: owner.email,
-        role: owner.role,
-        image: owner.image,
-      },
-    })
     
+    })
+    console.log("host created successfully", owner._id)
     
     
   } catch (error) {
@@ -147,16 +133,13 @@ export const loginUser = async (req, res) =>{
       return res.status(400).json({success: false, message: "Incorrect password"})
     }
   
-    
     user.role = "guest"
-    
     await user.save()
     
-    
-    generateTokenAndSetCookie(res, user._id, user.role)
+    generateTokenAndSetCookie(res, user._id)
     res.status(200).json({
-      userId: user._id,
-      fullName: user.fullName,
+      id: user._id,
+      name: user.fullName,
       email: user.email,
       role: user.role,
       image: user.image,
@@ -183,28 +166,29 @@ export const loginOwner = async (req, res) =>{
       return res.status(400).json({success: false, message: "Invalid email"})
     }
     const isPasswordValid = await bcrypt.compare(password, owner.password)
+    
     if(!isPasswordValid){
       return res.status(400).json({success: false, message: "Incorrect password"})
     }
     
-    
-    
-    
+  
     owner.role = "owner"
     
     await owner.save()
     
-    generateTokenAndSetCookie(res, owner._id, owner.role)
+    
+    generateTokenAndSetCookie(res, owner._id)
+    
     res.status(200).json({
-      userId: owner._id,
-      fullName: owner.fullName,
+      id: owner._id,
+      name: owner.fullName,
       email: owner.email,
       role: owner.role,
       image: owner.image,
 
     })
     
-    console.log("host login successfully")
+    console.log("host login successfully", owner._id)
   } catch (error) {
     
     res.status(400).json({success: false, message: error.message})
@@ -230,15 +214,15 @@ export const loginAdmin = async (req, res) =>{
     admin.role = 'admin'
     await admin.save()
     
-    generateTokenAndSetCookie(res, admin._id, admin.role)
+    generateTokenAndSetCookie(res, admin._id)
     
   
     
     
     res.status(200).json({
       
-      userId: admin._id,
-      username: admin.username,
+      id: admin._id,
+      name: admin.username,
       role: admin.role,
       image: admin.image
       

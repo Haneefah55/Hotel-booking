@@ -12,11 +12,20 @@ const roomSchema = new mongoose.Schema({
     type: String, // e.g., "Deluxe Room"
     required: true,
   },
+  number: {
+    type: Number,
+    required: true,
+  },
+  roomType: {
+    type: String,
+    required: true,
+  },
   
   price: {
     type: Number,
     required: true,
   },
+  
   maxGuests: {
     type: Number,
     default: 1,
@@ -37,6 +46,20 @@ const roomSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  isBooked: {
+    type: Boolean,
+    default: false,
+  },
+  bookedDates: [{
+    checkInDate: Date,
+    checkOutDate: Date,
+    booking: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Booking'
+    },
+    default: [],
+  }],
+  
 }, { timestamps: true } );
 const Room = mongoose.model("Room", roomSchema)
 

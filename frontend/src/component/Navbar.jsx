@@ -10,7 +10,7 @@ import { Link } from 'react-router'
 const Navbar = ({ user }) => {
   const navLinks = [
       { name: 'Home', path: '/' },
-      { name: 'Hotel', path: '/hotel' },
+      { name: 'Hotel', path: '/hotels' },
       { name: 'Experience', path: '/experience' },
       { name: 'Contact', path: '/contact' },
   ]
@@ -99,7 +99,7 @@ const Navbar = ({ user }) => {
         {/* Mobile Menu */}
         
      
-        <div className={`fixed top-0 left-0 w-full h-screen bg-white/40 backdrop-blur-lg  text-base flex flex-col md:hidden items-center justify-center gap-6 font-medium text-amber-800 text-xl font-semibold transition-all duration-500 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
+        <div className={`fixed top-0 left-0 w-full h-screen bg-white/90 backdrop-blur-xl text-base flex flex-col md:hidden items-center justify-center gap-6 font-medium text-amber-800 text-xl font-semibold transition-all duration-500 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
           <button className="absolute top-4 right-4"
             onClick={() => setIsMenuOpen(false)}>
                 <X className="h-10 w-10 text-amber-800" />

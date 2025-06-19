@@ -200,7 +200,7 @@ const LoginPage = () =>{
        
       </div>
 
-      <div className={`bg-gray-100 ${open ? "flex" : "hidden"} space-x-3 p-3 text-sm rounded w-[300px] justify-between z-50 items-center absolute top-[50%] border border-gray-300/60`}>
+      <div className={`bg-gray-100 ${open ? "flex" : "hidden"} space-x-3 p-3 text-sm rounded w-[300px] justify-between z-50 items-center absolute flex-row gap-5 top-[50%] border border-gray-300/60`}>
         <CircleCheckBig className="h-10 text-amber-800" />
       
         <h3 className="text-gray-700 font-medium">User Login Successfully</h3>

@@ -10,8 +10,11 @@ const hotelSchema = new mongoose.Schema({
     required: true,
   },
   address: {
-    type: String,
-    required: true,
+    street: { type: String, required: true },
+    city:    { type: String, required: true },
+    state:   { type: String },
+    country: { type: String, required: true },
+    zipCode: { type: String },
   },
   amenities: {
     type: [String],
@@ -27,7 +30,6 @@ const hotelSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Owner", // or "Owner" if you use a separate model
     required: true,
-    default: null,
   },
   
   rating: {
@@ -54,6 +56,11 @@ const hotelSchema = new mongoose.Schema({
   approved: {
     type: Boolean,
     default: false, // for admin approval before listing
+  },
+  status: {
+    type: String,
+    enum: ['active', 'inactive'],
+    default: "active",
   },
   
   

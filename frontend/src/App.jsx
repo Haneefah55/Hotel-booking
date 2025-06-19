@@ -5,6 +5,7 @@ import Navbar from './component/Navbar.jsx'
 import React, { useState, useEffect } from 'react'
 import { Routes, Route, useLocation} from "react-router";
 import Homepage from './page/Homepage.jsx'
+import HotelPage from './page/HotelPage.jsx'
 
 
 
@@ -24,7 +25,7 @@ import AddHotel from './page/owner/AddHotel.jsx'
 import AddRoom from './page/owner/AddRoom.jsx'
 import HotelList from './page/owner/HotelList.jsx'
 import RoomList from './page/owner/RoomList.jsx'
-
+import SingleHotel from './page/SingleHotel.jsx'
 import AdminLayout from './layouts/AdminLayout.jsx'
 import AdminDashboard from './page/admin/AdminDashboard.jsx'
 import AdminLogin from './page/admin/AdminLogin.jsx'
@@ -84,7 +85,7 @@ const App = () =>{
   
 
   const pathname= useLocation().pathname
-  const matchPaths = ['/login', '/signup'];
+  const matchPaths = ['/login', '/signup' ];
 
   const isMatch = matchPaths.some(path => pathname.includes(path));
   //const user = null
@@ -140,8 +141,8 @@ const App = () =>{
           </ProtectedRoutes>
         }>
           <Route index element ={<OwnerDashboard />} />
-          <Route path="hotel" element={<HotelList />} />
-          <Route path="room" element={<RoomList />} />
+          <Route path="hotels" element={<HotelList />} />
+          <Route path="rooms" element={<RoomList />} />
           <Route path="add-room" element={<AddRoom />} />
           <Route path="add-hotel" element={<AddHotel />} />
         </Route>
@@ -164,6 +165,11 @@ const App = () =>{
           <Route path="bookings" element={<div>my bookings</div>} />
         
         </Route>
+        
+        
+        <Route path="/hotel/:id" element={<SingleHotel />} />
+        <Route path="/hotels" element={<HotelPage  />} />
+        <Route path="/*" element={<div>Page Not Found</div>} />
                              
 
       </Routes>

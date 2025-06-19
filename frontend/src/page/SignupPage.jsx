@@ -201,7 +201,7 @@ const SignupPage = () =>{
        
       </div>
       
-      <div className={`bg-gray-100 ${open ? "inline-flex" : "hidden"} space-x-3 p-3 text-sm rounded w-[240px] absolute top-[50%] border border-gray-300/60`}>
+      <div className={`bg-gray-100 ${open ? "flex" : "hidden"} space-x-3 p-3 text-sm rounded w-[280px] absolute gap-5 top-[50%] border border-gray-300/60`}>
         <CircleCheckBig className="h-10 text-amber-800"/>
       
         <h3 className="text-gray-700 font-medium">Account Created Successfully<br />Login to continue</h3>

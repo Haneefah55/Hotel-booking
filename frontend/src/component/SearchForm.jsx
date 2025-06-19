@@ -5,8 +5,8 @@ const SearchForm = () =>{
   
   
   return(
-    <div className=" flex md:absolute md:top-[65%] items-center p-5 md:pl-20">
-      <form className="flex flex-col md:flex-row bg-gray-200 w-full md:w-[900px] text-amber-900 rounded-md shadow-sm justify-between md:ml-5 md:backdrop-blur-lg text-md p-5">
+    <div className=" flex md:absolute md:top-[65%] items-center p-5 md:pl-10">
+      <form className="flex flex-col md:flex-row bg-gray-200 w-full md:w-[850px] text-amber-900 rounded-md shadow-sm justify-between md:ml-5 md:backdrop-blur-lg text-md p-5">
         <div className=" flex flex-col w-[230px] gap-4 mb-5">
           <label htmlFor="destination" className=" flex gap-2">
             <CalendarFold />

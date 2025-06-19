@@ -28,8 +28,8 @@ const OwnerLayout = () =>{
   const navLinks = [
   
     { name: 'Dashboard', path: '/owner', icon: LayoutDashboard  },
-    { name: 'My Hotels', path: '/owner/hotel', icon: House },
-    { name: 'My Rooms', path: '/owner/room', icon: Bed },
+    { name: 'My Hotels', path: '/owner/hotels', icon: House },
+    { name: 'My Rooms', path: '/owner/rooms', icon: Bed },
     { name: 'Settings', path: '/owner/settings', icon: Settings },
   ]
   
@@ -42,7 +42,7 @@ const OwnerLayout = () =>{
         <div className="w-full h-full pt-20 flex justify-center text-gray-200 pl-5 flex-col bg-black/30" >
           <Link to="/" className=" flex gap-2 font-semithin mt-5 md:ml-20 "><House /> Home</Link>
           <h2 className="text-3xl text-center font-semibold text-gray-200">Dashboard</h2>
-          <p className="text-center text-amber-800 mt-10 text-xl font-semibold">Welcome, {user.fullName}</p>
+          <p className="text-center text-amber-800 mt-10 text-xl font-semibold">Welcome, {user.name}</p>
       
         </div>
       
