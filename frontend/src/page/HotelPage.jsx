@@ -69,7 +69,7 @@ const HotelPage = () =>{
     
       </div>
       
-      <div className="w-full mt-10 flex gap-8 flex-wrap p-5 items-center justify-center">
+      <div className="w-full mt-10 flex gap-8 flex-wrap p-10 items-center justify-center">
         { rooms.map((room, index) => (
           <div key={index} className=" w-[280px] h-[290px] bg-gray-100  rounded-lg shadow-md flex flex-col">
             <img 
