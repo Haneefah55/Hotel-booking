@@ -23,7 +23,7 @@ export const protectUserRoute = async (req, res, next) =>{
       return res.status(400).json({error: "Unathorized: Invalid Token"})
       
     }
-    const user = await User.findById(decoded.userId).select("-password")
+    const user = await User.findById(decoded.id).select("-password")
     
     if(!user){
       return res.status(404).json({error: "Access restricted!"})

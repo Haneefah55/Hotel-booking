@@ -10,14 +10,12 @@ import SearchForm from '../component/SearchForm.jsx'
 
 const Homepage = () => {
   
-  const { getAllRooms, rooms, error } = useHotelStore()
+  const { getAllRooms, rooms } = useHotelStore()
   
   
   useEffect(() => {
     getAllRooms()
-    if(error){
-      alert(error)
-    }
+    
   }, []) 
   
   
@@ -83,7 +81,7 @@ const Homepage = () => {
         
         <div className=" flex items-center flex-col justify-self-center p-5 md:w-[700px] mt-10 mb-1 text-gray-900">
           <h2 className=" text-3xl text-amber-800 mb-5  font-bold">Exclusive Offers</h2>
-          <p className="text-xl/7 text-center ">Take advantage of our exclusive time-limited offers and special packages .</p>
+          <p className="text-xl/7 text-center ">Take advantage of our exclusive time-limited offers and special packages to enhance your stay and create unforgettable memories</p>
         </div>
         
         <Offer />

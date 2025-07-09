@@ -99,6 +99,30 @@ export const useHotelStore = create(persist((set) => ({
       
     },
     
+    getSingleRoom: async(id) =>{
+      set({ isLoading: true, error: null })
+      
+      try {
+        
+        const response = await axios.get(`${API_URL}/room/${id}`, { withCredentials: true })
+        
+        const roomData = response.data.data
+       // alert(JSON.stringify(hotelData))
+        
+        set({ isLoading: false, rooms: roomData })
+        
+        
+      } catch (error) {
+        const errorMessage = error.response?.data?.message || "Error signing up";
+        set({ error: errorMessage, isLoading: false });
+        throw error;
+        
+      }
+      
+      
+      
+    },
+    
     getAllRooms: async () =>{
       
       try{

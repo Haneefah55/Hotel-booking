@@ -27,7 +27,7 @@ const Offer = () =>{
       discount: 30,
       img: img3,
       name: "Mindful Escape",
-      destination: "Stay productive and comfortable at our hotel with our business package.",
+      description: "Stay productive and comfortable at our hotel with our business package.",
       expires: "July 20",
     }
     
@@ -39,12 +39,26 @@ const Offer = () =>{
     
     <div className="w-full mt-10 h-auto flex gap-8 flex-wrap p-5 items-center justify-center" >
        { offers.map((offer, index) => (
-          <div key={index} className=" w-[340px] h-[230px] md:w-[380px] bg-gray-100 rounded-xl shadow-md flex flex-col">
+          <div key={index} className=" w-[340px] h-[230px] md:w-[380px] bg-gray-100 rounded-xl relative shadow-md flex flex-col">
             
             <img src={offer.img}
             className="w-full h-full rounded-xl object-cover"
             
             />
+            <div className="absolute text-gray-100  w-full h-full rounded-xl bg-black/40 p-5 flex flex-col gap-5" >
+              <div className="flex justify-between ">
+                <span className="bg-gray-100 text-amber-800 p-2 rounded-md font-semibold" >{offer.discount}% OFF</span>
+                  <span className="">View Offer</span>
+              </div>
+              <div>
+                <h2 className="font-bold" >{offer.name}</h2>
+              <p className="mt-3 mb-3">{offer.description}</p>
+              <p className="text-sm font-semithin">Expires {offer.expires}</p>
+              </div>
+             
+              
+              
+            </div>
             
             
           </div>

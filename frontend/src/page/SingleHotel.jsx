@@ -11,11 +11,7 @@ import { useAuthStore } from "../store/authStore.js"
 
 const SingleHotel = () =>{
     
- 
-  
-  
- const [isMenuOpen, setIsMenuOpen] = useState(false)
-  
+
   
   const { hotels, getSingleHotel } = useHotelStore()
   
@@ -44,7 +40,9 @@ const SingleHotel = () =>{
   return(
   
     <div className="w-screen bg-gray-200 h-auto flex gap-7 flex-col ">
-      <div className="w-screen bg-[url(./assets/images/hero.png)] flex h-[200px] bg-no-repeat bg-cover items-center justify-center"></div>
+      <div className="w-screen bg-[url(./assets/images/hero.png)] flex h-[200px] bg-no-repeat bg-cover items-center justify-center">
+        <Link to="/"  className=" text-gray-100 mt-10">Back to Home</Link>
+      </div>
             
       <div className="flex px-5 flex-col">
         <div className="flex items-center gap-5 mt-5">
@@ -57,10 +55,11 @@ const SingleHotel = () =>{
           />
         </div>
         
-        <p className="font-semibold flex gap-1">
+        <p className="font-semibold mt-2 flex gap-1">
           <MapPin /> {address}</p>
       
       </div>
+      
       <div className=" flex w-full h-[330px] md:h-[400px] px-5 relative mb-10 md:flex-row ">
         {images.map((imageUrl, index) => (
           <div key={index}  className={` absolute rounded-lg h-auto flex  shadow-xl overflow-hidden

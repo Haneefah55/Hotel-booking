@@ -1,10 +1,10 @@
-//import Navbar from '../component/Navbar.jsx//import { useAuthStore } from "../../store/authStore.js"
+//import Navbar from '../component/Navbar.jsx'
 import React, { useEffect }from 'react'
 import { Bed, Calendar, NotebookPen, House } from 'lucide-react'
 //import { Link, useLocation } from 'react-router'
 import { useHotelStore } from "../../store/hotelStore.js"
 import { useAuthStore } from "../../store/authStore.js"
-
+import { useParams } from 'react-router'
 
 const OwnerDashboard = () =>{
   
@@ -17,7 +17,8 @@ const OwnerDashboard = () =>{
 
   useEffect(() => {
     getOwnerHotel(id)
-   // window.alert(JSON.stringify(hotels))
+    
+    alert(JSON.stringify(hotels))
   }, []) 
   
   return(

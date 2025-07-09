@@ -6,6 +6,7 @@ import cookieParser from  'cookie-parser'
 
 import authRoutes from './routes/authRoutes.js'
 import hotelRoutes from './routes/hotelRoutes.js'
+import bookingRoutes from './routes/bookingRoutes.js'
 
 import bodyParser from 'body-parser'
 
@@ -29,6 +30,7 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }))
 
 app.use("/api/auth", authRoutes)
 app.use("/api/hotel", hotelRoutes)
+app.use("/api/booking", bookingRoutes)
 
 
 

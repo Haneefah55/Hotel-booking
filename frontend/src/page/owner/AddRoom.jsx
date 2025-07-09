@@ -31,16 +31,17 @@ const AddRoom = () =>{
   const [amenities, setAmenities] = useState([])
  
   const items = [
-      { id: 1, name: ' A Bed' },
-      { id: 2, name: '2 Beds' },
-      { id: 3, name: 'Entertainment' },
-      { id: 4, name: 'Free Wifi' },
-      { id: 5, name: 'WorkSpace' },
-      { id: 6, name: 'Mini-bar' },
-      { id: 7, name: 'Room Services' },
-      { id: 8, name: 'USB Charging Points' },
-      { id: 9, name: 'Bathrobes & Slippers' },
-      { id: 10, name: 'Toiletries' },
+      
+      { id: 1, name: 'Entertainment' },
+      { id: 2, name: 'Free Wifi' },
+      { id: 3, name: 'WorkSpace' },
+      { id: 4, name: 'Mini-bar' },
+      { id: 5, name: 'Room Services' },
+      { id: 6, name: 'USB Charging Points' },
+      { id: 7, name: 'Bathrobes & Slippers' },
+      { id: 8, name: 'Toiletries' },
+      { id: 9, name: 'Breakfast' },
+      { id: 10, name: 'Air Conditioner' },
       
   ];
   

@@ -66,9 +66,9 @@ const LoginPage = () =>{
   const handleOwnerLogin = async(e) =>{
     e.preventDefault()
     
-    const role = "owner"
+    
     try{
-      await ownerLogin (hostEmail, hostPassword, role)
+      await ownerLogin (hostEmail, hostPassword)
       handleOpen()
       setTimeout(() =>{
         navigate("/owner")

@@ -215,3 +215,31 @@ export const getSingleHotel = async (req,res) =>{
   }
   
 }
+
+export const getSingleRoom = async (req,res) =>{
+  
+   const { id } = req.params
+  try {
+    
+    const room = await Room.findById(id).populate("hotel")
+    if(!room) {
+      return res.status(404).json({
+      success: false,
+      message: 'room not found',
+    });
+    }
+    
+    res.status(200).json({
+      success: true,
+      data: room
+    });
+    
+    
+  } catch (err) {
+    res.status(400).json({
+      success: false,
+      error: err.message
+    });
+  }
+  
+}
