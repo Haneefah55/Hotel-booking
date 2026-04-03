@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 const userSchema = new mongoose.Schema({
-  fullName: {
+  username: {
     type: String,
     required: [true, "Name is required"],
   },
@@ -19,12 +19,28 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
+    enum: ["guest", "owner", "admin"],
     default: "guest",
   },
-  image: {
-    type: String, // array of image URLs
-    default: "",
+  image: String,
+  resetPasswordToken: String,
+  resetPasswordExpiresAt: Date,
+  verificationToken: String,
+  verificationTokenExpiresAt: Date,
+  googleId: String,
+  facebookId: String,
+  lastLogin: {
+    type: Date,
+    default: Date.now,
   },
+  tokenVersion : {
+    type: Number,
+    default: 0
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  }
   
 
 }, { timestamps: true } );

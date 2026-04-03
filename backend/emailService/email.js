@@ -67,3 +67,19 @@ export const sendBookingConfirmation = async (booking, user, room ) =>{
     });
   
 }
+
+export const sendVerificationEmail = async(email, name, date) =>{
+
+  const now = new Date()
+  const currentYear = now.getFullYear()
+  
+  const subject = "Verify Your Email"
+  const html = EMAIL_CHANGE_TEMP.replaceAll("{name}", name).replaceAll("{year}", currentYear).replaceAll("{date}", date ).replaceAll("{newEmail}", newEmail).replaceAll("{email}", email).replaceAll("{date}", date ).replaceAll("{newEmail}", newEmail).replaceAll("{year}", currentYear)
+  
+
+  await sendEmail(email, subject, html)
+  
+
+ 
+
+}

@@ -18,6 +18,7 @@ import HotelList from './page/owner/HotelList.jsx'
 import RoomList from './page/owner/RoomList.jsx'
 import SingleHotel from './page/SingleHotel.jsx'
 import SingleRoom from './page/SingleRoom.jsx'
+import BookRoom from './page/BookRoom.jsx'
 import AdminLayout from './layouts/AdminLayout.jsx'
 import AdminDashboard from './page/admin/AdminDashboard.jsx'
 import AdminLogin from './page/admin/AdminLogin.jsx'
@@ -29,9 +30,11 @@ const ProtectedRoutes = ({ allowedRole, children }) =>{
   
   //window.alert(JSON.stringify(user))
   if(!user){
+    window.alert("please login to continue")
     return <Navigate to="/login" replace />
   }
   if(!allowedRole.includes(user.role)){
+     window.alert("please login to continue")
     return <Navigate to="/login" replace />
   }
   
@@ -39,6 +42,10 @@ const ProtectedRoutes = ({ allowedRole, children }) =>{
   
   return children
 } 
+
+
+
+
 
 
 const ProtectAdminRoutes = ({ allowedRole, children }) =>{
@@ -77,7 +84,7 @@ const App = () =>{
   
 
   const pathname= useLocation().pathname
-  const matchPaths = ['/login', '/signup' ];
+  const matchPaths = ['/login', '/signup', '/book'];
 
   const isMatch = matchPaths.some(path => pathname.includes(path));
   //const user = null
@@ -90,7 +97,7 @@ const App = () =>{
 
   return(
     
-    <div className="font-[Outfit] w-screen h-screen bg-gray-100 " >
+    <div className=" w-screen min-h-screen bg-gray-100 " >
 
      {!isMatch && <Navbar user = {user} />} 
      
@@ -122,6 +129,7 @@ const App = () =>{
         }>
           <Route index element ={<GuestDashboard />} />
           <Route path="bookings" element={<div>my bookings</div>} />
+          
         
         </Route>
         
@@ -161,6 +169,13 @@ const App = () =>{
         
         <Route path="/hotel/:id" element={<SingleHotel />} />
         <Route path="/room/:id" element={<SingleRoom />} />
+
+        <Route path="/book/:id" element={
+          <ProtectedRoutes allowedRole={["guest"]}>
+            <BookRoom />
+          </ProtectedRoutes>
+        } />
+
         <Route path="/hotels" element={<HotelPage  />} />
         <Route path="/*" element={<div>Page Not Found</div>} />
                              

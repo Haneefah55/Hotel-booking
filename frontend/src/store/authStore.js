@@ -30,19 +30,24 @@ export const useAuthStore = create(persist((set) => ({
       }
     },
     
-    userLogin: async(email, password, role) =>{
+    userLogin: async(email, password) =>{
       set({ isLoading: true, error: null, isAuthenticated: false })
          
       try {
   
         const response = await axios.post(`${API_URL}/login-user`, { email, password })
+
+        
+
         const userData= response.data
   
-        set({ user: userData, isLoading: false, isAuthenticated: true, role: userData.role })
+        set({ user: userData, isLoading: false, isAuthenticated: true })
         
       } catch (error) {
-        const errorMessage = error.response?.data?.message || "Error signing up";
+        const errorMessage = error.response.data.message || "Error signing up";
         set({ error: errorMessage, isLoading: false, isAuthenticated: false });
+
+        throw error
       
       }
     },
@@ -88,7 +93,7 @@ export const useAuthStore = create(persist((set) => ({
       } catch (error) {
         const errorMessage = error.response?.data?.message || "Error signing up";
         set({ error: errorMessage, isLoading: false, isAuthenticated: false });
-      
+        throw error
       }
     },
     

@@ -1,11 +1,13 @@
 
 import express from 'express'
-import { createBooking } from '../controller/bookingController.js'
-import { protectUserRoute, protectOwnerRoute } from "../middleware/protectedRoutes.js"
-import { verifyToken } from "../middleware/verifyToken.js"
+/* import { createBooking, bookingPayment, bookingVerification } from '../controller/bookingController.js'
+ */
 
 const router = express.Router()
 
-router.post('/book', protectUserRoute, createBooking)
+/* router.post('/book', createBooking)
+router.post('/payment', bookingPayment)
+router.get('/payment/verify/:reference', bookingVerification) */
+
 
 export default router

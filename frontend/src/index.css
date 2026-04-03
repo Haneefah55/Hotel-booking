@@ -2,3 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Outfit';
+  src: url('./assets/fonts/Outfit-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Outfit';
+  src: url('./assets/fonts/Outfit-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Outfit';
+  src: url('./assets/fonts/Outfit-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Outfit';
+  src: url('./assets/fonts/Outfit-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+}
+
+
+body::-webkit-scrollbar {
+  width: 6px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #92400e;
+  border-radius: 13px;
+}
+
+body::-webkit-scrollbar-track {
+  background-color: rgba(255, 255, 255, 0.15);
+  opacity: 0.5;
+}
+
+
+body {
+  overflow-x: hidden;
+}

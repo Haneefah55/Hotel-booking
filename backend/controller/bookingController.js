@@ -1,8 +1,9 @@
-import Hotel from "../model/hotelModel.js"
+/* import Hotel from "../model/hotelModel.js"
 import Owner from "../model/ownerModel.js"
 import Room from "../model/roomModel.js"
 import Booking from "../model/bookingModel.js"
 import { sendBookingConfirmation } from "../utils/email.js"
+import { initializeTransaction, verifyTransaction } from "../utils/paystack.js"
 
 async function checkRoomAvailability(roomId, checkInDate, checkOutDate) {
   const conflictingBookings = await Booking.find({
@@ -32,6 +33,13 @@ export const createBooking = async(req, res) =>{
       return res.status(404).json({ success: false, message: 'Room not found' });
     }
 
+    if(guests > room.maxGuests){
+       return res.status(400).json({ 
+        success: false, 
+        message: 'No of guest is not allowed' 
+      });
+    }
+
     // Check room availability for the selected dates
     const isAvailable = await checkRoomAvailability(roomId, checkInDate, checkOutDate);
     if (!isAvailable) {
@@ -53,9 +61,8 @@ export const createBooking = async(req, res) =>{
       checkOutDate,
       guests,
       totalPrice,
-      paymentMethod,
       specialRequests,
-      status: 'confirmed' // or 'pending' depending on your payment flow
+      status: 'confirmed' // or 'pending' depending on your payment flow, completed after payment
     });
     
     
@@ -81,15 +88,72 @@ export const createBooking = async(req, res) =>{
     
   } catch (err) {
     console.error(err);
-    res.status(500).json({ 
+    res.status(400).json({ 
       success: false, 
-      message: 'Server error', 
+      message: 'Error booking room', 
       error: err.message 
     });
   }
 };
 
 export const bookingPayment = async (req, res) =>{
+  try {
+    
+    const { email, amount } = req.body
+    const response = await initializeTransaction(email, amount)
+
+
+    console.log(response.data)
+    const data = response.data
+
+    res.status(201).json({
+      success: true,
+      message: "Payment initialized successfully",
+      data,
+
+    });
+    
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error', 
+      error: err.message 
+    });
+  }
   
   
 }
+
+export const bookingVerification = async (req, res) =>{
+  try {
+    
+    const { reference } = req.params
+    const response = await verifyTransaction(reference)
+
+
+    console.log(response.data)
+
+    res.status(201).json({
+      success: true,
+      message: "Payment verified successfully",
+  
+
+    });
+    
+
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error', 
+      error: err.message 
+    });
+  }
+  
+  
+}
+ */

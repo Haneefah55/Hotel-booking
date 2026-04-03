@@ -100,7 +100,7 @@ export const useHotelStore = create(persist((set) => ({
     },
     
     getSingleRoom: async(id) =>{
-      set({ isLoading: true, error: null })
+    
       
       try {
         
@@ -109,11 +109,11 @@ export const useHotelStore = create(persist((set) => ({
         const roomData = response.data.data
        // alert(JSON.stringify(hotelData))
         
-        set({ isLoading: false, rooms: roomData })
+        set({ rooms: roomData })
         
         
       } catch (error) {
-        const errorMessage = error.response?.data?.message || "Error signing up";
+        const errorMessage = error.response?.data?.message || "Error getting room";
         set({ error: errorMessage, isLoading: false });
         throw error;
         

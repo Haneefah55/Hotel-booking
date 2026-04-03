@@ -84,19 +84,14 @@ const LoginPage = () =>{
   const handleGuestLogin = async(e) =>{
     e.preventDefault()
     
-   
-    const role = "guest"
-
     
-    try{
-      await userLogin (guestEmail, guestPassword, role)
-      handleOpen()
-      setTimeout(() =>{
-        navigate("/guest")
-      }, 3000)
-    } catch (error) {
-      alert(error)
-    }
+  
+    await userLogin (guestEmail, guestPassword)
+    handleOpen()
+    setTimeout(() =>{
+      navigate("/guest")
+    }, 3000)
+
     
   }
 
@@ -105,10 +100,10 @@ const LoginPage = () =>{
   
   return(
     
-    <div className="w-full h-screen md:h-screen md:max-w-[700px] flex items-center justify-center">
+    <div className="w-screen h-screen md:h-screen flex items-center justify-center">
 
 
-      <div className="p-6 flex flex-col items-center overflow-hidden relative justify-center">
+      <div className="p-6 flex flex-col m-auto items-center overflow-hidden relative justify-center">
         <div className="flex mb-6 items-center gap-1">
           <img src={logo} alt="logo" className="h-17"/>
             <h2 className={"font-bold text-3xl text-amber-800 "}>LetStay</h2>
@@ -146,7 +141,7 @@ const LoginPage = () =>{
         <div className="w-[300px] h-[350px] flex overflow-x-hidden snap-x snap-mandatory gap-10  scroll-smooth">
 
           <div className={`w-full h-full ${show ? "hidden" : "flex"} bg-gray-100 flex-col   items-center rounded-lg shadow-md transition linear duration-040 flex-shrink-0`}>
-             <h3 className=" text-xl mt-6 text-gray-500 font-bold">Host Login </h3>
+             <h3 className=" text-xl mt-2 text-gray-500 font-bold">Host Login </h3>
             <form onSubmit={handleOwnerLogin}  className=" text-amber-800 w-full mx-4 md:p-6 p-4 py-8 text-left text-sm">
               
               <div className="flex items-center my-4 border bg-amber-500/5 border-amber-800/10 rounded gap-2 pl-2">
@@ -168,7 +163,7 @@ const LoginPage = () =>{
             </form>
           </div>
           <div className={`w-full h-full flex-col flex-shrink-0 ${show ? "flex" : "hidden"} transition linear duration-040 items-center bg-gray-100`}>
-            <h3 className=" text-xl mt-6 text-gray-500 font-bold">Guest Login</h3>
+            <h3 className=" text-xl mt-2 text-gray-500 font-bold">Guest Login</h3>
             
             <form onSubmit={handleGuestLogin} className=" text-amber-800 w-full mx-4 md:p-6 p-4 py-8 text-left text-sm ">
               
@@ -187,7 +182,7 @@ const LoginPage = () =>{
                 </div>
                
               </div>
-              
+                {error && <p className='text-red-600 text-sm mt-3 mb-3'>{error}</p>}
               <button className="w-full mb-3 bg-amber-800 hover:bg-amber-950 transition-all active:scale-95 py-2.5 rounded text-gray-100 font-medium">{isLoading ? <Loader className="animate-spin h-15 text-gray-100 mx-auto"  /> : "Login"}</button>
               <p class="text-center mt-4">Don't have an account? <Link to="/signup" class="text-blue-500 underline">Sign Up</Link></p>
             </form>

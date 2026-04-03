@@ -1,17 +1,16 @@
 
 import express from 'express'
-import { addHotel, getAllHotels, getOwnerHotel, getSingleHotel, addRoom, getAllRooms, getSingleRoom } from '../controller/hotelController.js'
-import { protectOwnerRoute } from "../middleware/protectedRoutes.js"
+/* import { addHotel, getAllHotels, getOwnerHotel, getSingleHotel, addRoom, getAllRooms, getSingleRoom } from '../controller/hotelController.js' */
 
 const router = express.Router()
 
-router.get("/all", getAllHotels)
+/* router.get("/all", getAllHotels)
 router.get("/all-rooms", getAllRooms)
-router.get("/owner/:id", protectOwnerRoute, getOwnerHotel)
+router.get("/owner/:id", getOwnerHotel)
 router.get("/:id", getSingleHotel)
 router.get("/room/:id", getSingleRoom)
-router.post("/add-hotel/:id", protectOwnerRoute, addHotel)
-router.post("/add-room/:id", protectOwnerRoute, addRoom)
+router.post("/add-hotel/:id", addHotel)
+router.post("/add-room/:id",  addRoom) */
 
 
 

@@ -1,27 +1,21 @@
 import jwt from 'jsonwebtoken'
-import { config } from "dotenv"
 
 
-export const generateTokenAndSetCookie = (res, id) =>{
-  const token = jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "3d"
+const generateTokenAndSetCookie = (res, userId, tokenVersion) =>{
+  const assessToken = jwt.sign({ userId, tokenVersion }, process.env.JWT_TOKEN_SECRET, {
+    expiresIn: "7d"
   })
   
   res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
-    maxAge: 3 * 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   })
   
-  return token
+  return assessToken
 }
-// When logging in:
-/**
-const token = jwt.sign(
-  { id: user._id, role: user.role, email: user.email },
-  process.env.JWT_SECRET,
-  { expiresIn: '1d' }
-)
 
-**/
+
+
+export default generateTokenAndSetCookie

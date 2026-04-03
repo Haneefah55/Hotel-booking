@@ -96,7 +96,7 @@ const SignupPage = () =>{
   
   return(
     
-    <div className="w-full h-screen md:h-screen md:max-w-[700px] flex items-center justify-center">
+    <div className="w-full h-screen md:h-screen flex items-center justify-center">
 
       <div className="p-6 flex flex-col items-center overflow-hidden relative justify-center">
         <div className="flex mb-6 items-center gap-1">

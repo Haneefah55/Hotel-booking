@@ -1,4 +1,4 @@
-import cloudinary from "../utils/cloudinary.js"
+/* import cloudinary from "../utils/cloudinary.js"
 
 import Hotel from "../model/hotelModel.js"
 import Owner from "../model/ownerModel.js"
@@ -7,9 +7,6 @@ import Room from "../model/roomModel.js"
 export const addHotel = async(req, res) =>{
   const { name, description, address, amenities, uploadedImageUrls } = req.body
 
-    
-  
-  
   const { id } = req.params
   try {
     
@@ -243,3 +240,4 @@ export const getSingleRoom = async (req,res) =>{
   }
   
 }
+ */

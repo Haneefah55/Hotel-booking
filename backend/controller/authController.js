@@ -1,29 +1,27 @@
 
 import bcrypt from 'bcryptjs'
 import cloudinary from "../utils/cloudinary.js"
-import Admin from "../model/adminModel.js"
 import User from "../model/userModel.js"
-import Owner from "../model/ownerModel.js"
-import { generateTokenAndSetCookie } from '../utils/generateToken.js'
+import  generateTokenAndSetCookie from '../utils/generateToken.js'
 
-
-export const registerUser = async (req, res) =>{
+export const register = async (req, res) =>{
    
-  const { fullName, email, password } = req.body
+  const { username, email, password } = req.body
   
   try {
     
-    if(!fullName || !email || !password){
-    throw new Error("All fields are required")
+    if(!username || !email || !password){
+    
+    return res.status(400).json({ error: "All fields are required" })
     }
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     
     if(!emailRegex.test(email)){
-      return res.status(400).json({error: "Invalid email"})
+      return res.status(400).json({ error: "Invalid email" })
     }
     if(password.length < 6){
-      return res.status(400).json({error: "Password must be atleast 6 character"})
+      return res.status(400).json({ error: "Password must be atleast 6 character" })
     }
     
     const userExist = await User.findOne({email})
@@ -31,31 +29,24 @@ export const registerUser = async (req, res) =>{
     if(userExist){
       res.status(400).json({success: false, message: "User already exist"})
     }
-    
+  
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt)
     
     const user = new User({
-      fullName,
+      username,
       email,
       password: hashedPassword,
-      role: "guest"
       
     })
     
     await user.save()
-    //jwt
-   // generateTokenAndSetCookie(res, user._id, user.role)
     
-    
-    
-    res.status(200).json({
+    res.status(201).json({
       success: true,
       message: "User created successfully",
 
     })
-    console.log("user created successfully", user._id)
-    
     
   } catch (error) {
     res.status(400).json({success: false, message: error.message})
@@ -63,91 +54,49 @@ export const registerUser = async (req, res) =>{
   }
   
 }
-export const registerOwner = async (req, res) =>{
-  
-  const { fullName, email, password } = req.body
-  
-  try {
-    if(!fullName || !email || !password){
-    throw new Error("All fields are required")
-    }
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    
-    if(!emailRegex.test(email)){
-      return res.status(400).json({error: "Invalid email"})
-    }
-    if(password.length < 6){
-      return res.status(400).json({error: "Password must be atleast 6 character"})
-    }
-    
-    const ownerExist = await Owner.findOne({email})
-    
-    if(ownerExist){
-      res.status(400).json({success: false, message: "Host already exist"})
-    }
-    
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, salt)
-    
-    const owner = new Owner({
-      fullName,
-      email,
-      password: hashedPassword,
-      role: "owner"
-    
-    })
-    
-    await owner.save()
-    //jwt
-   // generateTokenAndSetCookie(res, owner._id, owner.role)
-    
-    
-    
-    res.status(200).json({
-      success: true,
-      message: "Host created successfully",
-    
-    })
-    console.log("host created successfully", owner._id)
-    
-    
-  } catch (error) {
-    res.status(400).json({success: false, message: error.message})
-    console.log('error creating host', error.message)
-  }
-  
-}
-export const loginUser = async (req, res) =>{
+
+export const userLogin = async (req, res) =>{
   try{
     const { email, password } = req.body
+
     if(!email && !password){
-      return res.status(400).json({success: false, message: "All fields are required"})
+      return res.status(400).json({ success: false, message: "All fields are required" })
     }
+
     const user = await User.findOne({ email })
+    
     if(!user){
-      return res.status(400).json({success: false, message: "Invalid email"})
+      return res.status(400).json({ success: false, message: "User not found" })
     }
+
     const isPasswordValid = await bcrypt.compare(password, user.password)
+
     if(!isPasswordValid){
-      return res.status(400).json({success: false, message: "Incorrect password"})
+      return res.status(400).json({ success: false, message: "Incorrect password" })
+    }
+
+    user.role = "guest"
+
+    await user.save()
+  
+    
+    generateTokenAndSetCookie(res, user._id, user.tokenVersion)
+    console.log("user login successfully")
+
+
+    const userInfo = {
+      id: user._id,
+      email: user.email,
+      name: user.name,
+      lastLogin: user.lastLogin,
+      image: user.image,
+      isVerified: user.isVerified,
+      createdAt: user.createdAt
     }
   
-    user.role = "guest"
-    await user.save()
+    res.status(200).json(userInfo)
     
-    generateTokenAndSetCookie(res, user._id)
-    res.status(200).json({
-      id: user._id,
-      name: user.fullName,
-      email: user.email,
-      role: user.role,
-      image: user.image,
-  
-      
-    })
     
-    console.log("user login successfully")
   } catch (error) {
     
     res.status(400).json({success: false, message: error.message})
@@ -155,79 +104,77 @@ export const loginUser = async (req, res) =>{
   }
 }
 
-export const loginOwner = async (req, res) =>{
+export const ownerLogin = async (req, res) =>{
   try{
     const { email, password } = req.body
+
     if(!email && !password){
       return res.status(400).json({success: false, message: "All fields are required"})
     }
-    const owner = await Owner.findOne({ email })
-    if(!owner){
-      return res.status(400).json({success: false, message: "Invalid email"})
-    }
-    const isPasswordValid = await bcrypt.compare(password, owner.password)
+
+    const user = await User.findOne({ email })
     
+    if(!user){
+      return res.status(400).json({success: false, message: "User not found"})
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password)
+
     if(!isPasswordValid){
       return res.status(400).json({success: false, message: "Incorrect password"})
     }
-    
-  
-    owner.role = "owner"
-    
-    await owner.save()
-    
-    
-    generateTokenAndSetCookie(res, owner._id)
-    
-    res.status(200).json({
-      id: owner._id,
-      name: owner.fullName,
-      email: owner.email,
-      role: owner.role,
-      image: owner.image,
 
-    })
+    user.role = "guest"
+
+    await user.save()
+  
     
-    console.log("host login successfully", owner._id)
+    
+    
+    generateTokenAndSetCookie(res, user._id)
+
+
+    res.status(200).json({ ...user._doc, password: undefined })
+    
+    console.log("owner login successfully")
   } catch (error) {
     
     res.status(400).json({success: false, message: error.message})
-    console.log("error logging in host", error.message)
+    console.log("error logging in owner", error.message)
   }
-    
 }
 
-export const loginAdmin = async (req, res) =>{
+export const adminLogin = async (req, res) =>{
   try{
     const { username, password } = req.body
+
     if(!username && !password){
       return res.status(400).json({success: false, message: "All fields are required"})
     }
-    const admin = await Admin.findOne({ username })
-    if(!admin){
-      return res.status(400).json({success: false, message: "Incorrect username or password"})
+
+    const user = await User.findOne({ username })
+    
+    if(!user){
+      return res.status(400).json({success: false, message: "User not found"})
     }
-    const isPasswordValid = await bcrypt.compare(password, admin.password)
+
+    const isPasswordValid = await bcrypt.compare(password, user.password)
+
     if(!isPasswordValid){
-      return res.status(400).json({success: false, message: "Incorrect username or password"})
+      return res.status(400).json({success: false, message: "Incorrect password"})
     }
-    admin.role = 'admin'
-    await admin.save()
-    
-    generateTokenAndSetCookie(res, admin._id)
-    
+
+    user.role = "admin"
+
+    await user.save()
   
     
     
-    res.status(200).json({
-      
-      id: admin._id,
-      name: admin.username,
-      role: admin.role,
-      image: admin.image
-      
     
-    })
+    generateTokenAndSetCookie(res, user._id)
+
+
+    res.status(200).json({ ...user._doc, password: undefined })
     
     console.log("admin login successfully")
   } catch (error) {
@@ -237,27 +184,34 @@ export const loginAdmin = async (req, res) =>{
   }
 }
 
+
 export const logout = async (req, res) =>{
 
-  res.clearCookie("token", {
+  try {
+    res.clearCookie("token", {
     httpOnly: true,
     sameSite: "strict",
-  
-  
-  })
-  
-  res.status(200).json({success: true, message: "User logout successfully"})
-  console.log("user logout successfully")
+
+    })
+    
+    res.status(200).json({success: true, message: "User logout successfully"})
+  } catch (error) {
+    console.error("Error in logout contoller", error.message);
+    res.status(500).json({ 
+      success: false,
+      message: error.message
+    })
+  }
   
 }
 
 
-
-export const changeUserPassword = async (req, res) =>{
+export const changePassword = async (req, res) =>{
   
   try {
     const { oldPassword, newPassword } = req.body
-    const { id } = req.params
+    const user = req.user
+    
     if(!oldPassword){
       return res.status(400).json({success: false, message: "Please enter the old password"})
     }
@@ -267,16 +221,10 @@ export const changeUserPassword = async (req, res) =>{
     }
   
   
-    const user = await User.findOne({ id })
-  
-    if(!user){
-      return res.status(400).json({success: false, message: "User not found"})
-    }
-    
     const isPasswordValid = await bcrypt.compare(oldPassword, user.password)
     
     if(!isPasswordValid){
-      return res.status(400).json({success: false, message: "Incorrect password"})
+      return res.status(400).json({success: false, message: "Incorrect old password"})
     }
     
     const salt = await bcrypt.genSalt(10)
@@ -289,7 +237,7 @@ export const changeUserPassword = async (req, res) =>{
     
     
   } catch (error) {
-  
+    console.log("error in changepassword controller", error.message)
     res.status(400).json({success: false, message: error.message})
     
   }
@@ -300,11 +248,13 @@ export const changeUserPassword = async (req, res) =>{
   
 }
 
-export const changeOwnerPassword = async (req, res) =>{
+
+export const changeAdminPassword = async (req, res) =>{
   
   try {
     const { oldPassword, newPassword } = req.body
-    const { ownerId } = req.params
+    const user = req.user
+    
     if(!oldPassword){
       return res.status(400).json({success: false, message: "Please enter the old password"})
     }
@@ -314,29 +264,23 @@ export const changeOwnerPassword = async (req, res) =>{
     }
   
   
-    const owner = await Owner.findOne({ ownerId })
-  
-    if(!owner){
-      return res.status(400).json({success: false, message: "Host not found"})
-    }
-    
-    const isPasswordValid = await bcrypt.compare(oldPassword, owner.password)
+    const isPasswordValid = await bcrypt.compare(oldPassword, user.password)
     
     if(!isPasswordValid){
-      return res.status(400).json({success: false, message: "Incorrect password"})
+      return res.status(400).json({success: false, message: "Incorrect old password"})
     }
     
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(newPassword, salt)
     
-    owner.password = hashedPassword
-    await owner.save()
+    user.password = hashedPassword
+    await user.save()
     
     res.status(200).json({success: true, message: "Password changed successfully"})
-  
+    
     
   } catch (error) {
-  
+    console.log("error in change admin password controller", error.message)
     res.status(400).json({success: false, message: error.message})
     
   }
@@ -346,6 +290,7 @@ export const changeOwnerPassword = async (req, res) =>{
   
   
 }
+
 
 
 export const updateUser = async(req, res) =>{
@@ -382,97 +327,18 @@ export const updateUser = async(req, res) =>{
 
 
 
-
-/***
-export const checkAuth = async (req, res) =>{
-  try{
-    const user = await User.findById(req.userId).select("-password")
-    if(!user) return res.status(400).json({success: false, message: "User not found"})
-    res.status(200).json({
-      success: true,
-      message: "User Authenticated",
-      user: {
-        userId: user._id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role,
-        image: user.image,
-      }
-    })
-  } catch (error) {
-
-    res.status(400).json({success: false, message: error.message})
-  }
-}
-***/
-
-export const checkLogin = async (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ message: 'User not authenticated' })
-  }
-
-  const { id, role } = req.user
-
-  if (role === 'guest') {
-    const user = await User.findById(id).select("-password")
-    
-    if(!user) return res.status(400).json({success: false, message: "User not found"})
-    
-    return res.status(200).json({
-      userId: user._id,
-      fullName: user.fullName,
-      email: user.email,
-      role: user.role,
-      image: user.image,
-      
-    })
- 
-  } else if (role === 'owner') {
-    const owner = await Owner.findById(id).select("-password")
-    if(!owner) return res.status(400).json({success: false, message: "Host not found"})
-    
-    return res.status(200).json({
-      
-      userId: owner._id,
-      fullName: owner.fullName,
-      email: owner.email,
-      role: owner.role,
-      image: owner.image,
-    
-    })
-    
-  } else if (role === 'admin') {
-    const admin = await Admin.findById(id).select("-password")
-    if(!admin) return res.status(400).json({success: false, message: "Host not found"})
-    
-    return res.status(200).json({
-      
-      userId: admin._id,
-      username: admin.username,
-      role: admin.role,
-      image: admin.image,
-      
-    })
-  
-  } else {
-    return res.status(403).json({ message: 'Not Authenticated' })
-  }
-}
-/***
-
-
-export const checkLogin = async(req, res) => {
+export const checkAuth = async(req, res) => {
   try{
     
     if (!req.user) {
-    return res.status(401).json({ message: 'Not logged in' })
+    return res.status(401).json({ message: 'Unauthorized' })
     }
 
     res.status(200).json({ user: req.user }) // This should be the user from JWT or session
   } catch (error) {
+    console.log("error in checkauth controller", error.message)
     res.status(400).json({success: false, message: error.message})
     
   }
   
 }
-**/
