@@ -45,7 +45,7 @@ const App = () =>{
 
   return(
     
-    <div className=" w-screen min-h-screen bg-gray-100 " >
+    <div className=" w-screen min-h-screen bg-gray-100 overflow-x-clip " >
 
      {!isMatch && <Navbar user = {user} />} 
      
