@@ -19,8 +19,8 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["guest", "owner", "admin"],
-    default: "guest",
+    enum: ["guest", "host", "admin"],
+    required: true
   },
   image: String,
   resetPasswordToken: String,

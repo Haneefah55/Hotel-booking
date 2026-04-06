@@ -1,27 +1,30 @@
-/* import cloudinary from "../utils/cloudinary.js"
+//import cloudinary from "../utils/cloudinary.js"
 
 import Hotel from "../model/hotelModel.js"
-import Owner from "../model/ownerModel.js"
+import User from "../model/userModel.js"
+
 import Room from "../model/roomModel.js"
 
 export const addHotel = async(req, res) =>{
   const { name, description, address, amenities, uploadedImageUrls } = req.body
 
-  const { id } = req.params
+  const hostId = req.user._id
+ // console.log("hostId", req.user._id)
   try {
     
     const hotelExist = await Hotel.findOne({name})
     
     if(hotelExist){
-      res.status(400).json({success: false, message: "Hotel already created"})
+      res.status(400).json({success: false, message: "Hotel already exist"})
     }
     
-   // const owners = await Owner.find({})
-    const hotelOwner = await Owner.findById(id)
+   
+    const user = await User.findById(hostId)
+    //console.log("role", user.role)
     
     
-    if(!hotelOwner){
-      return res.status(400).json({success: false, message: "Host not found: Create a Host account"})
+    if(user.role !== "host"){
+      return res.status(400).json({success: false, message: "Access Restricted, Create a Host account"})
     }
     
     const hotel = new Hotel({
@@ -30,7 +33,7 @@ export const addHotel = async(req, res) =>{
       address,
       amenities,
       images: uploadedImageUrls,
-      owner: hotelOwner._id,
+      host: user._id,
       
       
     })
@@ -46,8 +49,9 @@ export const addHotel = async(req, res) =>{
     console.log("hotel added successfully")
     
   } catch (error) {
-    res.status(400).json({success: false, message: error.message})
     console.log('error adding hotel', error.message)
+    res.status(400).json({success: false, message: error.message})
+    
   }
   
   
@@ -57,21 +61,91 @@ export const addHotel = async(req, res) =>{
 export const getAllHotels = async (req,res) =>{
   
   try {
-    const hotels = await Hotel.find({}).populate("owner")
+    const hotels = await Hotel.find({}).sort({ createdAt: -1 })
     
     res.status(200).json({
       success: true,
       count: hotels.length,
       data: hotels
     });
-  } catch (err) {
+  } catch (error) {
+    console.log('error getting all hotels', error.message)
+    
     res.status(400).json({
       success: false,
-      error: err.message
+      error: error.message
     });
   }
   
 }
+
+export const addRoom = async(req, res) =>{
+  
+  try {
+
+    const { name, roomNumber, roomType, price, amenities, maxGuests, uploadedImageUrls } = req.body
+  
+    const  hotelId = req.params.id
+    console.log("hotelId", req.params.id)
+    
+    const roomExist = await Room.findOne({roomNumber})
+    
+    if(roomExist){
+      res.status(400).json({success: false, message: "Room Existed"})
+    }
+    
+    const hotel = await Hotel.findById(hotelId)
+    const host = await User.findById(req.user._id)
+
+    if(host.role !== "host") {
+      res.status(400).json({success: false, message: "Access Restricted"})
+    }
+      
+    if(!hotel){
+      console.log("Hotel not found: Create Hotel")
+      return res.status(400).json({success: false, message: "Hotel not found: Create Hotel"})
+      
+    }
+  
+    
+    const room = new Room({
+      hotel: hotel._id,
+      host: host._id,
+      name,
+      roomNumber,
+      roomType,
+      price,
+      maxGuests,
+      amenities,
+      images: uploadedImageUrls,
+      
+    })
+
+    await room.save()
+    
+    hotel.rooms.push(room._id)
+    
+    await hotel.save()
+    console.log("hotel room added successfully")
+    console.log(room)
+    
+    res.status(200).json({
+      
+      success: true,
+      message: "Hotel room added successfully"
+
+    })
+    
+    
+  } catch (error) {
+    console.log('error adding room', error.message)
+    res.status(400).json({success: false, message: error.message})
+    
+  }
+  
+
+}
+
 export const getAllRooms = async (req,res) =>{
   
   try {
@@ -82,15 +156,73 @@ export const getAllRooms = async (req,res) =>{
       count: rooms.length,
       data: rooms
     });
-  } catch (err) {
+  } catch (error) {
+    console.log("error get all rooms", error.message)
     res.status(400).json({
       success: false,
-      error: err.message
+      error: error.message
     });
   }
   
 }
 
+
+export const getHotel = async (req,res) =>{
+  
+  const { id } = req.params
+  console.log("id", id)
+  try {
+    
+    const hotel = await Hotel.findById(id).populate("host")
+    if(!hotel) {
+      return res.status(404).json({
+      success: true,
+      message: 'hotel not found',
+    });
+    }
+    
+    res.status(200).json(hotel);
+    
+  } catch (error) {
+    console.log("error getting hotel", error.message)
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
+  }
+  
+}
+
+
+
+export const getRoom = async (req,res) =>{
+  
+  const { id } = req.params
+  try {
+    
+    const room = await Room.findById(id).populate("hotel")
+    if(!room) {
+      return res.status(404).json({
+      success: false,
+      message: 'room not found',
+    });
+    }
+    
+    res.status(200).json(room);
+    
+    
+  } catch (error) {
+    console.log("error getting hotel", error.message)
+    res.status(400).json({
+      success: false,
+      error: error.message
+    });
+  }
+  
+}
+
+
+/*
 
 export const getOwnerHotel = async(req, res) =>{
   
@@ -121,123 +253,5 @@ export const getOwnerHotel = async(req, res) =>{
   }
 }
 
-export const addRoom = async(req, res) =>{
-  const { name, number, roomType, price, amenities, maxGuests, uploadedImageUrls } = req.body
-  
-  
-  const id = req.owner._id
-  
-  try {
-    
-    const roomExist = await Room.findOne({number})
-    
-    if(roomExist){
-      res.status(400).json({success: false, message: "Room Existed"})
-    }
-    
-    const hotel = await Hotel.findById(req.params.id)
-      
-    if(!hotel){
-      return res.status(400).json({success: false, message: "Hotel not found: Create Hotel"})
-      console.log("Hotel not found: Create Hotel")
-    }
-    
-    const owner = await Owner.findById(id)
-    
-    if(!owner){
-      return res.status(400).json({success: false, message: "Access restrited: Login as owner to continue"})
-      console.log("Access restrited: Login as owner to continue")
-    }
-    
-    const room = new Room({
-      hotel: hotel._id,
-      name,
-      number,
-      roomType,
-      price,
-      maxGuests,
-      amenities,
-      images: uploadedImageUrls,
-      
-      
-      
-      
-    })
-    await room.save()
-    
-    hotel.rooms.push(room._id)
-    
-    await hotel.save()
-    
-    res.status(200).json({
-      
-      success: true,
-      message: "Hotel room added successfully"
 
-    })
-    console.log("hotel room added successfully")
-    
-  } catch (error) {
-    res.status(400).json({success: false, message: error.message})
-    console.log('error adding room', error.message)
-  }
-  
-  
-  
-}
-
-export const getSingleHotel = async (req,res) =>{
-  
-   const { id } = req.params
-  try {
-    
-    const hotel = await Hotel.findById(id)
-    if(!hotel) {
-      return res.status(404).json({
-      success: true,
-      message: 'hotel not found',
-    });
-    }
-    
-    res.status(200).json({
-      success: true,
-      data: hotel
-    });
-    
-  } catch (err) {
-    res.status(400).json({
-      success: false,
-      error: err.message
-    });
-  }
-  
-}
-
-export const getSingleRoom = async (req,res) =>{
-  
-   const { id } = req.params
-  try {
-    
-    const room = await Room.findById(id).populate("hotel")
-    if(!room) {
-      return res.status(404).json({
-      success: false,
-      message: 'room not found',
-    });
-    }
-    
-    res.status(200).json({
-      success: true,
-      data: room
-    });
-    
-    
-  } catch (err) {
-    res.status(400).json({
-      success: false,
-      error: err.message
-    });
-  }
-  
-}
  */

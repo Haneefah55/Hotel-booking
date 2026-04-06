@@ -1,26 +1,23 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import axios from 'axios'
-
-axios.defaults.withCredentials = true
-
-const API_URL= import.meta.env.MODE === "development" ? "http://localhost:5000/api/auth" : "/api/auth"
+import axios from '../utils/axios.js'
 
 export const useAuthStore = create(persist((set) => ({
   
     user: null,
-    role: null,
     isAuthenticated: false,
     isLoading: false,
     error: null,
     
-    userSignup: async (fullName, email, password) =>{
+    signup: async (username, email, password, role) =>{
       set({ isLoading: true, error: null })
       
       try {
+
+        const data = {username, email, password, role}
         
         
-        const response = await axios.post(`${API_URL}/signup-user`, { fullName, email, password })
+        const response = await axios.post('/signup', data)
         
         set({ isLoading: false, error: null })
       } catch (error) {
@@ -30,7 +27,7 @@ export const useAuthStore = create(persist((set) => ({
       }
     },
     
-    userLogin: async(email, password) =>{
+    login: async(email, password) =>{
       set({ isLoading: true, error: null, isAuthenticated: false })
          
       try {
@@ -100,20 +97,14 @@ export const useAuthStore = create(persist((set) => ({
     checkAuth: async()  =>{
       
       try {
-        const response = await axios.get(`${API_URL}/check-login`, {withCredentials: true })
-        const user = {
-          id: response.data.userId,
-          fullName: response.data.fullName,
-          email: response.data.email,
-          role: response.data.role,
-          image: response.data.image
-        };
+        const response = await axios.get('/auth')
+        console.log("response", response)
   
         
         set({ user, isAuthenticated: true })
         
       } catch (error) {
-        const errorMessage = error.response?.data?.message || "Error signing up";
+        const errorMessage = error.response?.data?.message || "Error checking auth";
         set({ error: errorMessage, isLoading: false, isAuthenticated: false });
       }
     },

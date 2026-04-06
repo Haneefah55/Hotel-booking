@@ -7,15 +7,8 @@ const hotelSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: true,
   },
-  address: {
-    street: { type: String, required: true },
-    city:    { type: String, required: true },
-    state:   { type: String },
-    country: { type: String, required: true },
-    zipCode: { type: String },
-  },
+  address: String,
   amenities: {
     type: [String],
     default: [],
@@ -26,9 +19,9 @@ const hotelSchema = new mongoose.Schema({
     default: [],
   },
   
-  owner: {
+  host: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Owner", // or "Owner" if you use a separate model
+    ref: "User", 
     required: true,
   },
   

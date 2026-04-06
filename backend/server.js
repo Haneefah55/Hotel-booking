@@ -20,7 +20,7 @@ const port = process.env.PORT || 5300
 
 app.use(cookieParser())
 app.use(cors({
-  origin: 'http://localhost:5173',  // frontend origin
+  origin: '*',  // frontend origin
   credentials: true                 // allows cookies & sessions
 }))
 app.use(express.json({ limit: '50mb' }))

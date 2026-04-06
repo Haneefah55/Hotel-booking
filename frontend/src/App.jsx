@@ -25,58 +25,6 @@ import AdminLogin from './page/admin/AdminLogin.jsx'
 
 
 
-const ProtectedRoutes = ({ allowedRole, children }) =>{
-  const { user } = useAuthStore()
-  
-  //window.alert(JSON.stringify(user))
-  if(!user){
-    window.alert("please login to continue")
-    return <Navigate to="/login" replace />
-  }
-  if(!allowedRole.includes(user.role)){
-     window.alert("please login to continue")
-    return <Navigate to="/login" replace />
-  }
-  
-
-  
-  return children
-} 
-
-
-
-
-
-
-const ProtectAdminRoutes = ({ allowedRole, children }) =>{
-  const { user } = useAuthStore()
-  
-  //window.alert(JSON.stringify(user))
-  if(!user){
-    return <Navigate to="/login-admin" replace />
-  }
-  if(!allowedRole.includes(user.role)){
-    return <Navigate to="/login" replace />
-  }
-  
-
-  
-  return children
-} 
-
-
-const RedirectAuthenticatedUser = ({ children }) =>{
-  const { isAuthenticated } = useAuthStore()
-
-  
-  if(isAuthenticated){
-    return <Navigate to="/" replace />
-  }
-  return children
-}
-
-
-
 const App = () =>{
 
   
@@ -92,7 +40,7 @@ const App = () =>{
 
   useEffect(() => {
     checkAuth()
-    //window.alert(JSON.stringify(user))
+    
   }, [])
 
   return(
@@ -106,75 +54,22 @@ const App = () =>{
       <Routes>
         <Route path="/" element={<Homepage />} />
                  
-        <Route path="/login" element={
-          <RedirectAuthenticatedUser>
-            <LoginPage />
-          </RedirectAuthenticatedUser>
-        } />
-        
-        <Route path="/signup" element={
-          <RedirectAuthenticatedUser>
-            <SignupPage />
-          </RedirectAuthenticatedUser>
-        
-          
-        } />
-        
-        {/** Guest **/}
-        
-        <Route path="/guest" element={
-          <ProtectedRoutes allowedRole={["guest"]}>
-            <GuestLayout />
-          </ProtectedRoutes>
-        }>
-          <Route index element ={<GuestDashboard />} />
-          <Route path="bookings" element={<div>my bookings</div>} />
-          
-        
-        </Route>
-        
-             {/** Owner **/}
-            
-        <Route path="/owner" element={
-          <ProtectedRoutes allowedRole={["owner"]}>
-            <OwnerLayout />
-          </ProtectedRoutes>
-        }>
-          <Route index element ={<OwnerDashboard />} />
-          <Route path="hotels" element={<HotelList />} />
-          <Route path="rooms" element={<RoomList />} />
-          <Route path="add-room" element={<AddRoom />} />
-          <Route path="add-hotel" element={<AddHotel />} />
-        </Route>
-        
+        <Route path="/login" element={<LoginPage />}/>
+        <Route path="/signup" element={<SignupPage />}/>
+      
 
         
         {/** Admin **/}
 
               
-        <Route path="/login-admin" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminLogin />} />
         
-               
-
-        <Route path="/admin" element={
-          <ProtectAdminRoutes allowedRole={["admin"]}>
-            <AdminLayout />
-          </ProtectAdminRoutes>
-        }>
-          <Route index element ={<AdminDashboard />} />
-          <Route path="bookings" element={<div>my bookings</div>} />
-        
-        </Route>
+  
         
         
         <Route path="/hotel/:id" element={<SingleHotel />} />
         <Route path="/room/:id" element={<SingleRoom />} />
 
-        <Route path="/book/:id" element={
-          <ProtectedRoutes allowedRole={["guest"]}>
-            <BookRoom />
-          </ProtectedRoutes>
-        } />
 
         <Route path="/hotels" element={<HotelPage  />} />
         <Route path="/*" element={<div>Page Not Found</div>} />

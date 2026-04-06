@@ -4,9 +4,9 @@ import cloudinary from "../utils/cloudinary.js"
 import User from "../model/userModel.js"
 import  generateTokenAndSetCookie from '../utils/generateToken.js'
 
-export const register = async (req, res) =>{
+export const signup = async (req, res) =>{
    
-  const { username, email, password } = req.body
+  const { username, email, password, role } = req.body
   
   try {
     
@@ -37,6 +37,7 @@ export const register = async (req, res) =>{
       username,
       email,
       password: hashedPassword,
+      role: role
       
     })
     
@@ -55,7 +56,7 @@ export const register = async (req, res) =>{
   
 }
 
-export const userLogin = async (req, res) =>{
+export const login = async (req, res) =>{
   try{
     const { email, password } = req.body
 
@@ -75,24 +76,25 @@ export const userLogin = async (req, res) =>{
       return res.status(400).json({ success: false, message: "Incorrect password" })
     }
 
-    user.role = "guest"
-
     await user.save()
   
     
-    generateTokenAndSetCookie(res, user._id, user.tokenVersion)
+    //generateTokenAndSetCookie(res, user._id, user.tokenVersion)
+     generateTokenAndSetCookie(res, user._id, user.tokenVersion)
+     //console.log("accessToken", accessToken)
     console.log("user login successfully")
-
-
     const userInfo = {
       id: user._id,
       email: user.email,
-      name: user.name,
+      name: user.username,
       lastLogin: user.lastLogin,
       image: user.image,
       isVerified: user.isVerified,
-      createdAt: user.createdAt
+      createdAt: user.createdAt,
+      role: user.role,
     }
+
+    
   
     res.status(200).json(userInfo)
     
@@ -104,97 +106,24 @@ export const userLogin = async (req, res) =>{
   }
 }
 
-export const ownerLogin = async (req, res) =>{
-  try{
-    const { email, password } = req.body
-
-    if(!email && !password){
-      return res.status(400).json({success: false, message: "All fields are required"})
-    }
-
-    const user = await User.findOne({ email })
-    
-    if(!user){
-      return res.status(400).json({success: false, message: "User not found"})
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password)
-
-    if(!isPasswordValid){
-      return res.status(400).json({success: false, message: "Incorrect password"})
-    }
-
-    user.role = "guest"
-
-    await user.save()
-  
-    
-    
-    
-    generateTokenAndSetCookie(res, user._id)
-
-
-    res.status(200).json({ ...user._doc, password: undefined })
-    
-    console.log("owner login successfully")
-  } catch (error) {
-    
-    res.status(400).json({success: false, message: error.message})
-    console.log("error logging in owner", error.message)
-  }
-}
-
-export const adminLogin = async (req, res) =>{
-  try{
-    const { username, password } = req.body
-
-    if(!username && !password){
-      return res.status(400).json({success: false, message: "All fields are required"})
-    }
-
-    const user = await User.findOne({ username })
-    
-    if(!user){
-      return res.status(400).json({success: false, message: "User not found"})
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password)
-
-    if(!isPasswordValid){
-      return res.status(400).json({success: false, message: "Incorrect password"})
-    }
-
-    user.role = "admin"
-
-    await user.save()
-  
-    
-    
-    
-    generateTokenAndSetCookie(res, user._id)
-
-
-    res.status(200).json({ ...user._doc, password: undefined })
-    
-    console.log("admin login successfully")
-  } catch (error) {
-    
-    res.status(400).json({success: false, message: error.message})
-    console.log("error logging in admin", error.message)
-  }
-}
 
 
 export const logout = async (req, res) =>{
 
   try {
-    res.clearCookie("token", {
+
+    const user = req.user
+  
+    await User.findByIdAndUpdate(user._id, {
+      $inc: { tokenVersion: 1 }
+    })  
+    res.clearCookie("accessToken", {
     httpOnly: true,
     sameSite: "strict",
 
     })
     
-    res.status(200).json({success: true, message: "User logout successfully"})
+    res.status(200).json({ success: true, message: "User logout successfully" })
   } catch (error) {
     console.error("Error in logout contoller", error.message);
     res.status(500).json({ 
@@ -291,8 +220,6 @@ export const changeAdminPassword = async (req, res) =>{
   
 }
 
-
-
 export const updateUser = async(req, res) =>{
   try{
     
@@ -325,19 +252,30 @@ export const updateUser = async(req, res) =>{
   }
 }
 
-
-
 export const checkAuth = async(req, res) => {
   try{
     
     if (!req.user) {
     return res.status(401).json({ message: 'Unauthorized' })
     }
+    const user = User.findById(req.user._id)
 
-    res.status(200).json({ user: req.user }) // This should be the user from JWT or session
+    const userInfo = {
+      id: user._id,
+      email: user.email,
+      name: user.username,
+      lastLogin: user.lastLogin,
+      image: user.image,
+      isVerified: user.isVerified,
+      createdAt: user.createdAt,
+      role: user.role,
+    }
+    
+
+    res.status(200).json(userInfo)
   } catch (error) {
     console.log("error in checkauth controller", error.message)
-    res.status(400).json({success: false, message: error.message})
+    res.status(400).json({ success: false, message: error.message })
     
   }
   
