@@ -23,9 +23,15 @@ const Homepage = () => {
   return(
     <div className="w-screen ">
       <Hero />
+      
+      <div className='flex md:hidden items-center justify-center mb-6'>
+        <SearchForm />
+
+      </div>
+      
    
       
-      <div className=" w-screen md:h-screen h-auto bg-gray-200 flex flex-col items-center pb-5  justify-center">
+      {/* <div className=" w-screen md:h-screen h-auto bg-gray-200 flex flex-col items-center pb-5  justify-center">
         <div className=" flex items-center flex-col justify-self-center p-5 md:w-[700px] mt-10 mb-1 text-gray-900">
           <h2 className=" text-3xl text-amber-800 mb-5  font-bold">Featured Destination</h2>
           <p className="text-xl/7 text-center ">Discover our carefully selected exceptional properties around the world, offering unrivaled luxury and unforgettable experiences.</p>
@@ -66,7 +72,7 @@ const Homepage = () => {
           ))}
         
       </div>
-      </div>
+      </div> */}
       
       <div className=" w-screen md:h-screen h-auto bg-gray-300 flex flex-col items-center pb-5 mb-5">
         

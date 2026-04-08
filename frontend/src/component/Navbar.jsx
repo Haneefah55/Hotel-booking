@@ -81,7 +81,7 @@ const Navbar = ({ user }) => {
 
         <div className="flex items-center gap-4">
           
-          <Menu onClick={() => setIsMenuOpen(!isMenuOpen)} className={`h-10 w-10 cursor-pointer text-amber-800 flex md:hidden`} 
+          <Menu onClick={() => setIsMenuOpen(!isMenuOpen)} className={`h-10 w-10 cursor-pointer  flex md:hidden ${isScrolled ? "text-amber-500" : "text-gray-200"}`} 
           />
           { user ? <Link to={path} className=" flex items-center gap-2 justify-center">
             {user?.image ? <img src={user?.image} className="size-8 rounded-full object-cover" /> : <CircleUserRound className={` size-8 ${isScrolled ? "text-amber-500" : "text-gray-200"}`} /> }

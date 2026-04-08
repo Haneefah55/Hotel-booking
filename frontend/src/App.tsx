@@ -3,7 +3,7 @@ import { useAuthStore } from "./store/authStore.js"
 import Navbar from './component/Navbar.jsx'
 import React, { useState, useEffect } from 'react'
 import { Routes, Route, useLocation} from "react-router";
-import Homepage from './page/Homepage.jsx'
+import Homepage from './page/Homepage.js'
 import HotelPage from './page/HotelPage.jsx'
 import LoginPage from './page/LoginPage.jsx'
 import SignupPage from './page/SignupPage.jsx'
@@ -45,7 +45,7 @@ const App = () =>{
 
   return(
     
-    <div className=" w-screen min-h-screen bg-gray-100 overflow-x-clip " >
+    <div className=" w-screen min-h-screen overflow-x-clip " >
 
      {!isMatch && <Navbar user = {user} />} 
      
