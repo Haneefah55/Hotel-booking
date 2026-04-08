@@ -7,11 +7,27 @@ import { useHotelStore } from "../store/hotelStore.js"
 import Offer from '../component/Offer.jsx'
 import SearchForm from '../component/SearchForm.jsx'
 import Hero from '../component/Hero.jsx';
+import cat1 from '../assets/images/hero.png'
+import cat2 from '../assets/images/cat2.jpg'
+import cat3 from '../assets/images/family.jpeg'
+import cat4 from '../assets/images/romantic.jpeg'
 
 
 const Homepage = () => {
   
   const { getAllRooms, rooms } = useHotelStore()
+  type Cats = {
+    name: string,
+    link: string,
+    img: string,
+  }
+
+  const categories: Cats[] = [
+    { name: "Budget Hotels", link: "budget-hotels", img: cat1 },
+    { name: "Luxury Hotels", link: "luxury-hotels", img: cat2 },
+    { name: "Short Stay", link: "short-stay", img: cat3 },
+    { name: "Apartment", link: "budget-hotels", img: cat4 },
+  ]
   
   
   useEffect(() => {
@@ -21,11 +37,39 @@ const Homepage = () => {
   
   
   return(
-    <div className="w-screen ">
+    <div className="w-screen  ">
       <Hero />
       
       <div className='flex md:hidden items-center justify-center mb-6'>
         <SearchForm />
+
+      </div>
+
+      <div className='flex w-full py-10 px-10 flex-col bg-gray-100 justify-center'>
+        <h3 className='text-2xl font-semibold'>Explore Categories</h3>
+      
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mt-5 '>
+
+          
+         {
+            categories.map((cat) => (
+              <Link to={`/categories/${cat.link}`} key={cat.name} className='flex'>
+                <div className={`w-[250px] h-[200px] flex  p-2 bg-cover relative`} style={{ backgroundImage: `url(${cat.img})`}}>
+                  <div className='absolute inset-0 bg-black/40 flex items-center justify-center'>
+                    <h4 className='text-xl font-medium text-white'>{cat.name}</h4>
+                  </div>
+                </div>
+
+
+                
+              </Link>
+
+            ))
+          } 
+
+
+        </div>
+
 
       </div>
       
