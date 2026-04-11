@@ -1,6 +1,6 @@
 
 import Rating from 'react-rating';
-import { CalendarFold, Calendar1, Search, Star, StarHalf } from 'lucide-react';
+import { CalendarFold, Calendar1, Search, Star, StarHalf, MapPin } from 'lucide-react';
 import { Link } from 'react-router'
 import React, { useEffect }from 'react'
 import { useHotelStore } from "../store/hotelStore.js"
@@ -11,6 +11,11 @@ import cat1 from '../assets/images/hero.png'
 import cat2 from '../assets/images/cat2.jpg'
 import cat3 from '../assets/images/family.jpeg'
 import cat4 from '../assets/images/romantic.jpeg'
+import img1 from '../assets/images/cairo.jpg'
+import img2 from '../assets/images/dubai.jpg'
+import img3 from '../assets/images/img3.jpg'
+import img4 from '../assets/images/ikoyi.jpg'
+
 
 
 const Homepage = () => {
@@ -21,6 +26,13 @@ const Homepage = () => {
     link: string,
     img: string,
   }
+
+  const destinations: Cats[] = [
+    { name: "Dubai", link: "dubai", img: img1 },
+    { name: "Cairo", link: "cairo", img: img2 },
+    { name: "Hawaii", link: "hawaii", img: img3 },
+    { name: "Lagos", link: "lagos", img: img4 },
+  ]
 
   const categories: Cats[] = [
     { name: "Budget Hotels", link: "budget-hotels", img: cat1 },
@@ -45,16 +57,16 @@ const Homepage = () => {
 
       </div>
 
-      <div className='flex w-full py-10 px-10 flex-col bg-gray-100 justify-center'>
+      <div className='flex w-full py-10 px-10 flex-col bg-gray-100 items-center md:items-start justify-center'>
         <h3 className='text-2xl font-semibold'>Explore Categories</h3>
       
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mt-5 '>
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 mt-5 gap-x-5 gap-y-6 items-center'>
 
           
          {
             categories.map((cat) => (
               <Link to={`/categories/${cat.link}`} key={cat.name} className='flex'>
-                <div className={`w-[250px] h-[200px] flex  p-2 bg-cover relative`} style={{ backgroundImage: `url(${cat.img})`}}>
+                <div className={`w-[250px] h-[200px] flex   p-2 bg-cover relative`} style={{ backgroundImage: `url(${cat.img})`}}>
                   <div className='absolute inset-0 bg-black/40 flex items-center justify-center'>
                     <h4 className='text-xl font-medium text-white'>{cat.name}</h4>
                   </div>
@@ -67,6 +79,43 @@ const Homepage = () => {
             ))
           } 
 
+
+        </div>
+        
+
+
+      </div >
+
+      <div className='flex w-full py-10 px-10 flex-col bg-gray-100 items-center justify-center'>
+        <h3 className='text-2xl font-semibold self-start'>Popular Destinations</h3>
+        <div className='flex flex-wrap mt-5 gap-x-5 gap-y-6 items-center'>
+          {
+            destinations.map((city) => (
+              <Link key={city.link} to={`/city/${city.link}`} className='group overflow-hidden'>
+                <div className='w-[280px] h-[200px] relative rounded-2xl bg-cover bg-no-repeat'  style={{ backgroundImage: `url(${city.img})`}}>
+                  <div className='absolute inset-0 rounded-2xl p-3 bg-black/20 flex items-end  '>
+                  
+                    <div className=' flex items-center justify-center'>
+                      <MapPin size={18} color='#ffffff'/>
+                      <h4 className='text-md font-medium ml-2 text-white'>{city.name}
+                      
+                      </h4>
+                    </div>
+                    <div className='absolute inset-0 bg-no-repeat translate-x-[300px] bg-cover rounded-2xl transition-all duration-1000 group-hover:translate-x-0' style={{ backgroundImage: `url(${cat1})`}}>
+                      <div  className='absolute inset-0 rounded-2xl p-3 bg-black/50 flex items-center justify-center   '>
+                        <h3 className='text-2xl font-medium text-white'>50+ Hotels</h3>
+
+                      </div>
+
+                    </div>
+                    
+                  </div>
+
+                </div>
+              </Link>
+              
+            ))
+          }
 
         </div>
 

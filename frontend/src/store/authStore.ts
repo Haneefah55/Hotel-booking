@@ -2,37 +2,66 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import axios from '../utils/axios.js'
 
-export const useAuthStore = create(persist((set) => ({
+type User ={
+  id: string,
+  email: string,
+  name: string,
+  lastLogin: string,
+  image: string,
+  isVerified: Boolean,
+  createdAt: Date,
+  role: string,
+}
+
+type Authstate = {
+  user: User | null,
+  isAuthenticated: Boolean,
+  isLoading: Boolean,
+  error: string | null,
+  checkAuthError: string | null,
+  signup: (
+    username: string, 
+    email: string, 
+    password: string, 
+    role: "guest" | "host"
+  ) => Promise<void>,
+  login: (
+    email: string, 
+    password: string, 
+  ) => Promise<void>,
+}
+
+export const useAuthStore = create<Authstate>((set) => ({
   
     user: null,
     isAuthenticated: false,
     isLoading: false,
     error: null,
+    checkAuthError: null,
     
-    signup: async (username, email, password, role) =>{
+    signup: async (username: string, email: string, password: string, role: "guest" | "host") =>{
       set({ isLoading: true, error: null })
       
       try {
 
-        const data = {username, email, password, role}
-        
+        const data = { username, email, password, role }
         
         const response = await axios.post('/signup', data)
         
         set({ isLoading: false, error: null })
-      } catch (error) {
+      } catch (error: any) {
         const errorMessage = error.response?.data?.message || "Error signing up";
         set({ error: errorMessage, isLoading: false });
         throw error;
       }
     },
     
-    login: async(email, password) =>{
+    login: async(email: string, password: string) =>{
       set({ isLoading: true, error: null, isAuthenticated: false })
          
       try {
   
-        const response = await axios.post(`${API_URL}/login-user`, { email, password })
+        const response = await axios.post(`/login-user`, { email, password })
 
         
 
@@ -40,7 +69,7 @@ export const useAuthStore = create(persist((set) => ({
   
         set({ user: userData, isLoading: false, isAuthenticated: true })
         
-      } catch (error) {
+      } catch (error: any) {
         const errorMessage = error.response.data.message || "Error signing up";
         set({ error: errorMessage, isLoading: false, isAuthenticated: false });
 
@@ -52,93 +81,39 @@ export const useAuthStore = create(persist((set) => ({
     logout: async() =>{
       set({ error: null })
       try{
-        await axios.post(`${API_URL}/logout`, { withCredentials: true })
+        await axios.post(`/logout`)
         set({ user: null, isAuthenticated: false, error: null })
+        console.log("user logout")
       } catch (error) {
         set({ error: "Error logging out" })
         throw error
       }
       
-      
-      
     },
-    
-    ownerSignup: async (fullName, email, password) =>{
-      set({ isLoading: true, error: null })
-      
-      try {
-        const response = await axios.post(`${API_URL}/signup-owner`, { fullName, email, password })
-        
-        set({ isLoading: false, error: null })
-      } catch (error) {
-        const errorMessage = error.response?.data?.message || "Error signing up owner";
-        set({ error: errorMessage, isLoading: false });
-        throw error;
-      }
-    },
-    
-    ownerLogin: async(email, password) =>{
-      set({ isLoading: true, error: null, isAuthenticated: false })
-         
-      try {
   
-        const response = await axios.post(`${API_URL}/login-owner`, { email, password })
-        const userData= response.data
-        
-        set({ user: userData, isLoading: false, isAuthenticated: true })
-        
-      } catch (error) {
-        const errorMessage = error.response?.data?.message || "Error signing up";
-        set({ error: errorMessage, isLoading: false, isAuthenticated: false });
-        throw error
-      }
-    },
-    
     checkAuth: async()  =>{
+      set({ error: null })
       
       try {
         const response = await axios.get('/auth')
         console.log("response", response)
   
         
-        set({ user, isAuthenticated: true })
+        set({ user: response.data, isAuthenticated: true })
         
-      } catch (error) {
+      } catch (error: any) {
         const errorMessage = error.response?.data?.message || "Error checking auth";
-        set({ error: errorMessage, isLoading: false, isAuthenticated: false });
+        set({ checkAuthError: errorMessage, isLoading: false, isAuthenticated: false });
       }
     },
     
     
-   
-    adminLogin: async(username, password) =>{
-      set({ isLoading: true, error: null, isAuthenticated: false })
-         
-      try {
-  
-        const response = await axios.post(`${API_URL}/login-admin`, { username, password })
-        const userData= response.data
-        
-        set({ user: userData, isLoading: false, isAuthenticated: true, role: userData.role })
-        
-      } catch (error) {
-        const errorMessage = error.response?.data?.message || "Error signing up";
-        set({ error: errorMessage, isLoading: false, isAuthenticated: false });
-      
-      }
-    }
+
     
   
   }),
-  {
-    name: 'auth-storage', // 🔒 key in localStorage
-    partialize: (state) => ({
-      user: state.user,
-      isAuthenticated: state.isAuthenticated,
-      role: state.role
-    }),
-  }
-))
+ 
+)
   
 
   

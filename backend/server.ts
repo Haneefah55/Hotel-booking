@@ -20,7 +20,7 @@ const port = process.env.PORT || 5300
 
 app.use(cookieParser())
 app.use(cors({
-  origin: '*',  // frontend origin
+  origin: ['http://localhost:5173', 'https://stayhub-silk.vercel.app'],  // frontend origin
   credentials: true                 // allows cookies & sessions
 }))
 app.use(express.json({ limit: '50mb' }))

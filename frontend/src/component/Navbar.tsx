@@ -4,30 +4,21 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import { Menu, X, CircleUserRound, Home } from 'lucide-react'
 import { Link } from 'react-router'
-//import { useAuthStore } from "../store/authStore.js"
+import { useAuthStore } from "../store/authStore.js"
 
 
-const Navbar = ({ user }) => {
+const Navbar = () => {
   const navLinks = [
       { name: 'Home', path: '/' },
       { name: 'Hotel', path: '/hotels' },
       { name: 'Experience', path: '/experience' },
       { name: 'Contact', path: '/contact' },
   ]
-  let path = '/'
-  if (user?.role === "user"){
-    path = '/guest'
-  } else if (user?.role === "owner"){
-    path = '/owner'
-  } else if (user?.role === "admin"){
-    path = '/admin'
-  } else {
-    path= '/'
-  }
+  const { user, logout } = useAuthStore()
+  console.log("user", user)
 
-  //const { isAuthenticated, user } = useAuthStore
  
- const username = user?.fullName
+ const username = user?.username
  
 
 // const [isLogin, setIsLogin] = useState(false)
@@ -71,26 +62,33 @@ const Navbar = ({ user }) => {
                 </Link>
             ))}
             
-            
-          
-            
         </div>
 
         {/* Navbar Right */}
         
 
         <div className="flex items-center gap-4">
+         
           
           <Menu onClick={() => setIsMenuOpen(!isMenuOpen)} className={`h-10 w-10 cursor-pointer  flex md:hidden ${isScrolled ? "text-amber-500" : "text-gray-200"}`} 
           />
-          { user ? <Link to={path} className=" flex items-center gap-2 justify-center">
+
+          { !user && 
+            <Link to="/login" className={` font-bold  flex transition-all border-2 p-2 text-md duration-500 ${isScrolled ? "text-amber-500 border-amber-500 hover:text-gray-100  " : "text-gray-100 border-gray-100 hover:bg-gray-100 hover:text-amber-500"}`} >
+                Login
+              </Link>
+
+          
+          }
+          { user &&
+            <Link to={'/'} className=" flex items-center gap-2 justify-center">
             {user?.image ? <img src={user?.image} className="size-8 rounded-full object-cover" /> : <CircleUserRound className={` size-8 ${isScrolled ? "text-amber-500" : "text-gray-200"}`} /> }
 
             <div className={`${isScrolled ? "text-amber-800" : "text-gray-100"} hidden md:flex`}>{username}</div>
-            </Link> :  <Link to="/login" className={` font-bold  flex transition-all border-2 p-2 text-md duration-500 ${isScrolled ? "text-amber-800 border-amber-500 hover:bg-amber-500 hover:text-gray-100  " : "text-gray-100 border-gray-100 hover:bg-gray-100 hover:text-amber-800"}`} >
-                Login
-              </Link>
-          }    
+            </Link> 
+
+          }
+         
           
         </div>
 
