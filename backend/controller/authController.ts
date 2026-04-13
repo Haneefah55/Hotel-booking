@@ -1,10 +1,41 @@
 
 import bcrypt from 'bcryptjs'
+import type { Request, Response } from "express"
 import cloudinary from "../utils/cloudinary.js"
 import User from "../model/userModel.js"
 import  generateTokenAndSetCookie from '../utils/generateToken.js'
+import type { freemem } from 'node:os'
 
-export const signup = async (req, res) =>{
+type signupBody = {
+    username: string, 
+    email: string, 
+    password: string, 
+    role: "guest" | "host"
+}
+
+type loginBody = {
+    email: string, 
+    password: string, 
+}
+
+interface AuthRequest extends Request {
+  user: {
+    id: string,
+    email: string,
+    name: string,
+    lastLogin: string,
+    image: string,
+    isVerified: Boolean,
+    createdAt: Date,
+    role: string,
+
+  }
+}
+
+export const signup = async (
+    req: Request<{}, {}, signupBody>,
+    res: Response
+  ) =>{
    
   const { username, email, password, role } = req.body
   
@@ -49,14 +80,17 @@ export const signup = async (req, res) =>{
 
     })
     
-  } catch (error) {
+  } catch (error: any) {
     res.status(400).json({success: false, message: error.message})
     console.log('error creating user', error.message)
   }
   
 }
 
-export const login = async (req, res) =>{
+export const login = async (
+  req: Request<{}, {}, loginBody>,
+  res: Response
+) =>{
   try{
     const { email, password } = req.body
 
@@ -99,7 +133,7 @@ export const login = async (req, res) =>{
     res.status(200).json(userInfo)
     
     
-  } catch (error) {
+  } catch (error: any) {
     
     res.status(400).json({success: false, message: error.message})
     console.log("error logging in user", error.message)
@@ -108,13 +142,17 @@ export const login = async (req, res) =>{
 
 
 
-export const logout = async (req, res) =>{
+export const logout = async (
+  req: AuthRequest,
+  res: Response
+) =>{
 
   try {
 
     const user = req.user
+    console.log(req.user)
   
-    await User.findByIdAndUpdate(user._id, {
+    await User.findByIdAndUpdate(user.id, {
       $inc: { tokenVersion: 1 }
     })  
     res.clearCookie("accessToken", {
@@ -124,7 +162,7 @@ export const logout = async (req, res) =>{
     })
     
     res.status(200).json({ success: true, message: "User logout successfully" })
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in logout contoller", error.message);
     res.status(500).json({ 
       success: false,
@@ -135,7 +173,7 @@ export const logout = async (req, res) =>{
 }
 
 
-export const changePassword = async (req, res) =>{
+/* export const changePassword = async (req, res) =>{
   
   try {
     const { oldPassword, newPassword } = req.body
@@ -233,7 +271,7 @@ export const updateUser = async(req, res) =>{
     const picUrl = uploadResponse.secure_url
     
     data.image = picUrl
-***/
+
 
     if(req.user._id.toString() !== id){
       return res.status(400).json({success: false, message: "Not authorized "})
@@ -250,15 +288,21 @@ export const updateUser = async(req, res) =>{
   } catch (error) {
     res.status(400).json({success: false, message: error.message, error: "Internal error"})
   }
-}
+} */
 
-export const checkAuth = async(req, res) => {
+export const checkAuth = async(
+  req: AuthRequest,
+  res: Response
+) => {
   try{
     
     if (!req.user) {
-    return res.status(401).json({ message: 'Unauthorized' })
+      return res.status(401).json({ message: 'Unauthorized' })
     }
-    const user = User.findById(req.user._id)
+    const user = await User.findById(req.user.id)
+    if(!user) {
+      return res.status(404).json({ message: 'user not found' })
+    }
 
     const userInfo = {
       id: user._id,
@@ -273,7 +317,7 @@ export const checkAuth = async(req, res) => {
     
 
     res.status(200).json(userInfo)
-  } catch (error) {
+  } catch (error: any) {
     console.log("error in checkauth controller", error.message)
     res.status(400).json({ success: false, message: error.message })
     

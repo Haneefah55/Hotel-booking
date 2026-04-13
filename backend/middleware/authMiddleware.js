@@ -18,9 +18,20 @@ export const protectRoute = async(req, res, next) =>{
     
     return res.status(401).json({ message: "Invalid token version" })
     }
+
+    const userInfo = {
+      id: user._id,
+      email: user.email,
+      name: user.username,
+      lastLogin: user.lastLogin,
+      image: user.image,
+      isVerified: user.isVerified,
+      createdAt: user.createdAt,
+      role: user.role,
+    }
     
     
-    req.user = user
+    req.user = userInfo
     next()
      
   } catch (error) {
