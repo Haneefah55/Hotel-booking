@@ -13,16 +13,7 @@ import bg from '../assets/images/hero.png'
 const LoginPage = () =>{
 
 
-  const [open, setOpen] = useState(false)
   
-  
-  const handleOpen = () =>{
-    setOpen(true)
-  }
-  const handleClose = () =>{
-    setOpen(false)
-  }
-
   
   const { login, isLoading, error } = useAuthStore()
   
@@ -50,6 +41,10 @@ const LoginPage = () =>{
       setLoginerror('')
     }
     console.log(email, password)
+
+    await login(email, password)
+    navigate('/user/dashboard')
+
 
   }
   

@@ -9,6 +9,7 @@ import LoginPage from './page/LoginPage'
 import SignupPage from './page/SignupPage'
 import { Navigate } from 'react-router'
 import GuestLayout from './layouts/GuestLayout'
+import Dashboard from "./page/Dashboard";
 
 import SingleHotel from './page/SingleHotel.jsx'
 import SingleRoom from './page/SingleRoom.jsx'
@@ -49,9 +50,11 @@ const App = () =>{
                  
         <Route path="/login" element={<LoginPage />}/>
         <Route path="/signup" element={<SignupPage />}/>
+        <Route path="/user/dashboard" element={<Dashboard />}/>
         <Route path="/guest" element={<GuestLayout />}>
           <Route  />
         </Route>
+
 
         
         <Route path="/hotel/:id" element={<SingleHotel />} />

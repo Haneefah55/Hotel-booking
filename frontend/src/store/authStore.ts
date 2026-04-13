@@ -23,12 +23,14 @@ type Authstate = {
     username: string, 
     email: string, 
     password: string, 
-    role: "guest" | "host"
+    role: string,
   ) => Promise<void>,
   login: (
     email: string, 
     password: string, 
   ) => Promise<void>,
+  logout: () => Promise<void>,
+  checkAuth: () => Promise<void>,
 }
 
 export const useAuthStore = create<Authstate>((set) => ({
@@ -39,14 +41,14 @@ export const useAuthStore = create<Authstate>((set) => ({
     error: null,
     checkAuthError: null,
     
-    signup: async (username: string, email: string, password: string, role: "guest" | "host") =>{
+    signup: async (username: string, email: string, password: string, role: string) =>{
       set({ isLoading: true, error: null })
       
       try {
 
         const data = { username, email, password, role }
         
-        const response = await axios.post('/signup', data)
+        const response = await axios.post('/auth/signup', data)
         
         set({ isLoading: false, error: null })
       } catch (error: any) {
@@ -61,16 +63,16 @@ export const useAuthStore = create<Authstate>((set) => ({
          
       try {
   
-        const response = await axios.post(`/login-user`, { email, password })
-
-        
+        const response = await axios.post(`/auth/login`, { email, password })
+        console.log("response", response)
 
         const userData= response.data
   
         set({ user: userData, isLoading: false, isAuthenticated: true })
         
       } catch (error: any) {
-        const errorMessage = error.response.data.message || "Error signing up";
+        console.log(error)
+        const errorMessage = error.response.data.message || "Error logging in user ";
         set({ error: errorMessage, isLoading: false, isAuthenticated: false });
 
         throw error
@@ -81,10 +83,11 @@ export const useAuthStore = create<Authstate>((set) => ({
     logout: async() =>{
       set({ error: null })
       try{
-        await axios.post(`/logout`)
+        await axios.post(`/auth/logout`)
         set({ user: null, isAuthenticated: false, error: null })
         console.log("user logout")
       } catch (error) {
+        console.log(error)
         set({ error: "Error logging out" })
         throw error
       }

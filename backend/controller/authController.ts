@@ -101,7 +101,7 @@ export const login = async (
     const user = await User.findOne({ email })
     
     if(!user){
-      return res.status(400).json({ success: false, message: "User not found" })
+      return res.status(404).json({ success: false, message: "User not found" })
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password)
@@ -148,9 +148,10 @@ export const logout = async (
 ) =>{
 
   try {
+    console.log("logging out user")
 
     const user = req.user
-    console.log(req.user)
+    
   
     await User.findByIdAndUpdate(user.id, {
       $inc: { tokenVersion: 1 }

@@ -1,6 +1,6 @@
 import logo from '../assets/home.svg'
 
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 
 import { User, Mail, Lock, Loader, Eye, EyeOff, CircleCheckBig, X } from "lucide-react"
 import bg from '../assets/images/hero.png'
@@ -20,34 +20,29 @@ const SignupPage = () =>{
   const [password, setPassword] = useState('')
   const [signuperror, setSignuperror] = useState('')
   
-  
-  const handleOpen = () =>{
-    setOpen(true)
-  }
-  const handleClose = () =>{
-    setOpen(false)
-  }
-
-  
   const { signup, isLoading, error } = useAuthStore()
   
   
   const navigate = useNavigate()
   const [isVisible, setIsVisible] = useState(false)
   const handleSubmit = async(e: React.SubmitEvent<HTMLFormElement>) =>{
-      e.preventDefault()
-      if(!name || !email || !password){
-        setSignuperror("all fields are required")
-      }
-      setSignuperror("")
-      if(password.length < 6){
-        setSignuperror("password must be atleast 6 characters")
-      } else {
-        setSignuperror('')
-      }
-      console.log(name, email, password, role)
-  
+    e.preventDefault()
+    if(!name || !email || !password){
+      setSignuperror("all fields are required")
     }
+    setSignuperror("")
+    if(password.length < 6){
+      setSignuperror("password must be atleast 6 characters")
+    } else {
+      setSignuperror('')
+    }
+    console.log(name, email, password, role)
+
+    await signup(name,  email, password, role)
+    setOpen(true)
+  
+
+  }
     
     
 
@@ -144,12 +139,13 @@ const SignupPage = () =>{
         <div className={`bg-gray-100 ${open ? "flex" : "hidden"} space-x-3 p-3 text-sm rounded w-[280px] absolute gap-5 top-[50%] border border-gray-300/60`}>
           <CircleCheckBig className="h-10 text-amber-800"/>
         
-          <h3 className="text-gray-700 font-medium">Account Created Successfully<br />Login to continue</h3>
+          <h3 className="text-gray-700 font-medium">Account Created Successfully</h3>
+          <Link className='mt-5 px-3 py-2 bg-amber-800 text-white ' to={'/login'}>
+            Login to continue
+          </Link>
             
-        
-          <button type="button" aria-label="close" className="inline-flex active:scale-95 transition" onClick={handleClose}>
-            <X />
-          </button>
+      
+          
         </div>
 
       </div>
