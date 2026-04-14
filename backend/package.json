@@ -1,10 +1,10 @@
 {
   "name": "hotel",
   "version": "1.0.0",
-  "main": "backend/server.js",
+  "main": "backend/server.ts",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
+    "start": "node server.ts",
     "dev": "nodemon --watch . --ext ts,js --exec tsx server.ts"
   },
   "keywords": [],
