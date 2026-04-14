@@ -134,3 +134,120 @@ export const VERIFICATION_EMAIL_TEMP = `
 </html>
 
 `
+
+export const GUEST_WELCOME_EMAIL_TEMP = `
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="view-port" content="width=device-width, initial-scale = 1.0"> 
+   <title>Welcome to StayHub!</title> 
+  </head>
+  <body style = "font-family: Poppins, sans-serif; margin: 0, auto; max-width: 600px; padding: 20px; color: #333;">
+    <div style="text-align: center; padding: 20px;">
+      <h1 style="color: #fff; margin: auto; font-size: 25px;">StayHub</h1>
+    </div>
+    <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 5px 5px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+      <h3>Welcome, {name}</h3>
+      <p>A warm welcome to StayHub, your premier destination for all your booking needs!</p>
+      
+      <p>We're thrilled to have you on board! Our platform is designed to make your booking experience seamless, enjoyable, and rewarding.</p>
+      
+      <h4>Explore, Discover, and Book<br />
+        With StayHub, you can:</h4>
+        <ul>
+          <li><strong>Book rooms</strong> in seconds</li>
+          <li><strong>View your reservations</strong> any time</li>
+          <li><strong>Earn loyality points</strong> with each stay </li>
+          <li><strong>Access exclusive deals</strong> and early birds offer</li>
+  
+
+        </ul>
+
+        <div style="padding: 20px 40px; text-align: center; display: flex;">
+          <a href={link} style="background-color: brown; padding: .5rem 1rem; color: #fff; border: none; outline: none;">Login to continue</a>
+        
+        </div>
+        <p>we can't wait to welcome you
+        </p>
+
+        <h3>Warm regards,</h3>
+        <p>The StayHub team</p>
+        
+        
+
+    
+    
+      
+      <div style="color: #888; margin-top: 2rem; text-align: center; font-size: 15px;">
+        <p><a href="#">Unsubscribe</a></p>
+        <p>© {year} StayHub, Inc All right reserved.</p>
+      </div>
+      
+    </div>
+  </body>
+</html>
+
+`
+
+export const HOST_WELCOME_EMAIL_TEMP = `
+
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="view-port" content="width=device-width, initial-scale = 1.0"> 
+   <title>Welcome to StayHub!</title> 
+  </head>
+  <body style = "font-family: Poppins, sans-serif; margin: 0, auto; max-width: 600px; padding: 20px; color: #333;">
+    <div style="text-align: center; padding: 20px;">
+      <h1 style="color: #fff; margin: auto; font-size: 25px;">StayHub</h1>
+    </div>
+    <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 5px 5px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+      <h3>Dear, {name}</h3>
+      <p>Congratulations - your hotel host account on StayHub is now active. We're excited to partner with you</p>
+      
+      <p>We're thrilled to have you on board! Our platform is designed to make your hotel listing experience fulfiling and rewarding.</p>
+      
+      <h4>With your host account, you can:</h4>
+        <ul>
+          <li><strong>List and update</strong> your rooms and prices</li>
+          <li><strong>Manage bookings</strong> from a single dashboard</li>
+          <li><strong>Track occupancu and revenue</strong></li>
+          <li><strong>Access exclusive deals</strong> and early birds offer</li>
+  
+
+        </ul>
+
+        <div style="padding: 20px 40px; text-align: center; display: flex;">
+          <a href={link} style="background-color: brown; padding: .5rem 1rem; color: #fff; border: none; outline: none;">Login to continue</a>
+        
+        </div>
+        <p>Have any questions?, Our partner support team is here for you.
+        </p><span>partners@stayhub.com</span>
+
+        <h3>Best regards,</h3>
+        <p>The StayHub team</p>
+        
+        
+
+    
+    
+      
+      <div style="color: #888; margin-top: 2rem; text-align: center; font-size: 15px;">
+        <p><a href="#">Unsubscribe</a></p>
+        <p>© {year} StayHub, Inc All right reserved.</p>
+      </div>
+      
+    </div>
+  </body>
+</html>
+
+
+
+
+`
+

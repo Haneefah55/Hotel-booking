@@ -7,7 +7,7 @@ dotenv.config()
 export const sender = '"StayHub" <process.env.USER_EMAIL>'
 
 
-export const sendEmail = async(email, subject, html) =>{
+export const sendEmail = async(email: string, subject: string, html: string) =>{
 
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',

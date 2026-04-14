@@ -36,7 +36,7 @@ app.use("/api/booking", bookingRoutes)
 
 app.listen(port, () =>{
   connectDb()
-  console.log(`server running on port ${port}, ${process.env.MONGO_URI}`)
+  console.log(`server running on port ${port}`)
 })
 
 

@@ -1,8 +1,15 @@
 import User from '../model/userModel.js'
 import jwt from 'jsonwebtoken'
+import type { Request, Response, NextFunction } from 'express'
 
 
-export const protectRoute = async(req, res, next) =>{
+interface JwtPayload {
+  userId: string,
+  tokenVersion: number
+}
+
+
+export const protectRoute = async(req:Request, res:Response, next:NextFunction) =>{
   
   try {
     
@@ -12,19 +19,19 @@ export const protectRoute = async(req, res, next) =>{
       return res.status(401).json({ message: "Unauthorized" })
     }
      
-    const decoded = jwt.verify(accessToken, process.env.JWT_TOKEN_SECRET)
+    const decoded = jwt.verify(accessToken, process.env.JWT_TOKEN_SECRET!) as JwtPayload
     const user = await User.findById(decoded.userId)
-    if(user.tokenVersion !== decoded.tokenVersion) {
+    if(user?.tokenVersion !== decoded.tokenVersion) {
     
     return res.status(401).json({ message: "Invalid token version" })
     }
 
     const userInfo = {
-      id: user._id,
+      id: user.id,
       email: user.email,
       name: user.username,
       lastLogin: user.lastLogin,
-      image: user.image,
+      image: user.image!,
       isVerified: user.isVerified,
       createdAt: user.createdAt,
       role: user.role,
@@ -34,7 +41,7 @@ export const protectRoute = async(req, res, next) =>{
     req.user = userInfo
     next()
      
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in protect route contoller", error.message);
     res.status(401).json({ 
       success: false,
@@ -44,7 +51,7 @@ export const protectRoute = async(req, res, next) =>{
   
 }
 
-export const adminRoute = async(req, res, next) =>{
+export const adminRoute = async(req:Request, res:Response, next:NextFunction) =>{
   
   if(req.user && req.user.role === "admin"){
     

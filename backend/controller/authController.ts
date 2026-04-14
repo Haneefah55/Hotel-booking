@@ -5,6 +5,18 @@ import cloudinary from "../utils/cloudinary.js"
 import User from "../model/userModel.js"
 import  generateTokenAndSetCookie from '../utils/generateToken.js'
 import type { freemem } from 'node:os'
+import axios from 'axios'
+import { OAuth2Client } from 'google-auth-library'
+import { sendGuestWelcomeEmail, sendHostWelcomeEmail } from '../emailService/email.js'
+
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+
+type tokenPayload = {
+  email: string,
+  name: string,
+  sub: string
+}
 
 type signupBody = {
     username: string, 
@@ -23,7 +35,7 @@ interface AuthRequest extends Request {
     id: string,
     email: string,
     name: string,
-    lastLogin: string,
+    lastLogin: Date,
     image: string,
     isVerified: Boolean,
     createdAt: Date,
@@ -73,6 +85,14 @@ export const signup = async (
     })
     
     await user.save()
+
+    if (user.role === "guest"){
+      await sendGuestWelcomeEmail(user.email, user.username, user.createdAt)
+    } else if(user.role === "host") {
+      await sendHostWelcomeEmail(user.email, user.username, user.createdAt)
+    }
+
+    
     
     res.status(201).json({
       success: true,
@@ -140,17 +160,15 @@ export const login = async (
   }
 }
 
-
-
 export const logout = async (
-  req: AuthRequest,
+  req: Request,
   res: Response
 ) =>{
 
   try {
     console.log("logging out user")
 
-    const user = req.user
+    const user = req.user!
     
   
     await User.findByIdAndUpdate(user.id, {
@@ -173,126 +191,8 @@ export const logout = async (
   
 }
 
-
-/* export const changePassword = async (req, res) =>{
-  
-  try {
-    const { oldPassword, newPassword } = req.body
-    const user = req.user
-    
-    if(!oldPassword){
-      return res.status(400).json({success: false, message: "Please enter the old password"})
-    }
-    
-    if(newPassword.length < 6){
-      return res.status(400).json({error: "Password must be atleast 6 character"})
-    }
-  
-  
-    const isPasswordValid = await bcrypt.compare(oldPassword, user.password)
-    
-    if(!isPasswordValid){
-      return res.status(400).json({success: false, message: "Incorrect old password"})
-    }
-    
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(newPassword, salt)
-    
-    user.password = hashedPassword
-    await user.save()
-    
-    res.status(200).json({success: true, message: "Password changed successfully"})
-    
-    
-  } catch (error) {
-    console.log("error in changepassword controller", error.message)
-    res.status(400).json({success: false, message: error.message})
-    
-  }
-  
-  
-  
-  
-  
-}
-
-
-export const changeAdminPassword = async (req, res) =>{
-  
-  try {
-    const { oldPassword, newPassword } = req.body
-    const user = req.user
-    
-    if(!oldPassword){
-      return res.status(400).json({success: false, message: "Please enter the old password"})
-    }
-    
-    if(newPassword.length < 6){
-      return res.status(400).json({error: "Password must be atleast 6 character"})
-    }
-  
-  
-    const isPasswordValid = await bcrypt.compare(oldPassword, user.password)
-    
-    if(!isPasswordValid){
-      return res.status(400).json({success: false, message: "Incorrect old password"})
-    }
-    
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(newPassword, salt)
-    
-    user.password = hashedPassword
-    await user.save()
-    
-    res.status(200).json({success: true, message: "Password changed successfully"})
-    
-    
-  } catch (error) {
-    console.log("error in change admin password controller", error.message)
-    res.status(400).json({success: false, message: error.message})
-    
-  }
-  
-  
-  
-  
-  
-}
-
-export const updateUser = async(req, res) =>{
-  try{
-    
-    const data = req.body
-    const { id } = req.params
-  /***
-  
-    const pic = data.image
-    
-    const uploadResponse = await cloudinary.uploader.upload(pic)
-    const picUrl = uploadResponse.secure_url
-    
-    data.image = picUrl
-
-
-    if(req.user._id.toString() !== id){
-      return res.status(400).json({success: false, message: "Not authorized "})
-    }
-    
-    const updatedUser = await User.findByIdAndUpdate(id, data, { new: true })
-    
-    if(!updatedUser){
-      return res.status(400).json({success: false, message: "user not updated "})
-    }
-    
-    res.status(200).json({success: true, message: "User profile updates successfully"})
-    
-  } catch (error) {
-    res.status(400).json({success: false, message: error.message, error: "Internal error"})
-  }
-} */
-
 export const checkAuth = async(
-  req: AuthRequest,
+  req: Request,
   res: Response
 ) => {
   try{
@@ -324,4 +224,110 @@ export const checkAuth = async(
     
   }
   
+}
+
+export const authGoogle = async (req: Request, res: Response) => {
+  const redirect_uri = process.env.REDIRECT_URI!
+  
+  const authUri = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirect_uri)}&response_type=code&scope=${encodeURIComponent('profile email')}`
+
+  res.redirect(authUri)
+}
+
+
+export const callback = async (req:Request, res:Response) => {
+  console.log(req.query)
+
+  const code = req.query.code
+  console.log(code)
+  
+  try {
+
+    const googleRes = await axios.post("https://oauth2.googleapis.com/token", {
+      client_id: process.env.GOOGLE_CLIENT_ID!,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET!,
+      code: req.query.code,
+      redirect_uri: process.env.REDIRECT_URI,
+      grant_type: 'authorization_code'
+    })
+    console.log("callback successful")
+    //console.log("googleRes.data", googleRes.data)
+
+    const { id_token, access_token } = googleRes.data
+
+    const ticket = await client.verifyIdToken({
+      idToken: id_token,
+      audience: process.env.GOOGLE_CLIENT_ID!,
+    })
+
+    const payload = ticket.getPayload()
+
+    //console.log("payload", payload)
+
+    const { email, name, sub: googleId } = payload as tokenPayload
+
+    // check if user is already created
+
+    let user = await User.findOne({ email })
+
+    if (!user) {
+      user = await User.create({
+        email,
+        name,
+        googleId,
+        
+
+      })
+
+      //await sendWelcomeEmail(user.email, user.name)
+
+      
+    } 
+
+  
+    user.isVerified = true
+    user.lastLogin =  new Date()
+  
+    await user.save()
+
+    generateTokenAndSetCookie(res, user._id, user.tokenVersion)
+     //console.log("accessToken", accessToken)
+    console.log("user login successfully")
+
+    if (user.role === "guest"){
+      await sendGuestWelcomeEmail(user.email, user.username, user.createdAt)
+    } else if(user.role === "host") {
+      await sendHostWelcomeEmail(user.email, user.username, user.createdAt)
+    }
+    
+    const userInfo = {
+      id: user._id,
+      email: user.email,
+      name: user.username,
+      lastLogin: user.lastLogin,
+      image: user.image,
+      isVerified: user.isVerified,
+      createdAt: user.createdAt,
+      role: user.role,
+    }
+
+    
+  
+    res.status(200).json(userInfo)
+
+   
+  
+    
+    
+    
+  } catch (error: any) {
+
+    console.log(error)
+  
+    console.error("Error in callback contoller", error.message);
+    res.status(500).json({ 
+      success: false,
+      message: error.message
+    })
+  }
 }

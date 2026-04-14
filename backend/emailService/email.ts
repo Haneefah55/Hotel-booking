@@ -1,8 +1,48 @@
-import { transporter, sender } from "./emailService.js"
-import { BOOKING_CONFIRM_TEMP } from "./emailTemplate.js"
 
+import { GUEST_WELCOME_EMAIL_TEMP, HOST_WELCOME_EMAIL_TEMP } from "./emailTemplate.js"
+import { sendEmail } from "./emailConfig.js"
 
-export const sendBookingConfirmation = async (booking, user, room ) =>{
+const link = `${process.env.CLIENT_URL}/login`
+export const sendGuestWelcomeEmail = async(email: string, name: string, date: Date) =>{
+
+  const now = new Date()
+  const currentYear = now.getFullYear().toString()
+
+  const dated = date.toDateString()
+
+  
+  const subject = "Welcome to StayHub - Your stay starts here"
+  const html = GUEST_WELCOME_EMAIL_TEMP.replaceAll("{name}", name).replaceAll("{year}", currentYear).replaceAll("{date}", dated ).replaceAll("{year}", currentYear).replaceAll("{link}", link)
+  
+
+  await sendEmail(email, subject, html)
+  
+
+ 
+
+}
+
+export const sendHostWelcomeEmail = async(email: string, name: string, date: Date) =>{
+
+  const now = new Date()
+  const currentYear = now.getFullYear().toString()
+
+  const dated = date.toDateString()
+
+  
+  const subject = "Welcome to StayHub - Start Managing your hotels here"
+  const html = GUEST_WELCOME_EMAIL_TEMP.replaceAll("{name}", name).replaceAll("{year}", currentYear).replaceAll("{date}", dated ).replaceAll("{year}", currentYear).replaceAll("{link}", link)
+  
+
+  await sendEmail(email, subject, html)
+  
+
+ 
+
+}
+
+/* export const sendBookingConfirmation = async (booking, user, room ) =>{
+
   
   // Safely handle address (fallback to empty string if invalid)
   const hotelAddress = Array.isArray(room.hotel?.address) 
@@ -82,4 +122,4 @@ export const sendVerificationEmail = async(email, name, date) =>{
 
  
 
-}
+} */
