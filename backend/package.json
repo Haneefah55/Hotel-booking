@@ -4,7 +4,8 @@
   "main": "backend/server.ts",
   "type": "module",
   "scripts": {
-    "start": "node server.ts",
+    "build": "tsc",
+    "start": "node dist/server.ts",
     "dev": "nodemon --watch . --ext ts,js --exec tsx server.ts"
   },
   "keywords": [],
