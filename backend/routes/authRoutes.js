@@ -1,6 +1,6 @@
 
 import express from 'express'
-import { logout,  checkAuth,  signup, login } from '../controller/authController.js'
+import { logout,  checkAuth,  signup, login } from '../controller/authController.ts'
 import { adminRoute, protectRoute } from '../middleware/authMiddleware.js'
 
 
