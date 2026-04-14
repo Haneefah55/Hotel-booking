@@ -2,7 +2,7 @@
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     // File Layout
-    "rootDir": ".",
+    "rootDir": "./",
     "outDir": "./dist",
     "typeRoots": ["./types", "./node_modules/@types"],
 
@@ -14,7 +14,7 @@
     "types": ["node"],
     "allowJs": true,
     "checkJs": false,
-    "noEmit": true,
+    "noEmit": false,
     // For nodejs:
     "lib": ["esnext"],
     // "types": ["node"],
