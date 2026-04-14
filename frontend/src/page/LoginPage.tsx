@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { User, Mail, Lock, Loader, Eye, EyeOff, CircleCheckBig, X } from "lucide-react"
 
 import { Link } from 'react-router'
+import googleIcon from '../assets/images/google.png'
 import { useAuthStore } from "../store/authStore"
 
 import { useNavigate } from 'react-router'
@@ -12,18 +13,9 @@ import bg from '../assets/images/hero.png'
 
 const LoginPage = () =>{
 
-
-  
-  
-  const { login, isLoading, error } = useAuthStore()
-  
-  
+  const { login, isLoading, error, googleAuth } = useAuthStore()
   const navigate = useNavigate()
   const [isVisible, setIsVisible] = useState(false)
-    
-  
-  
- 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loginerror, setLoginerror] = useState('')
@@ -32,6 +24,8 @@ const LoginPage = () =>{
     
     setIsVisible(!isVisible)
   }
+
+  const googleLoginUrl = `${import.meta.env.VITE_API_URL}/auth/google`
 
   const handleSubmit = async(e: React.SubmitEvent<HTMLFormElement>) =>{
     e.preventDefault()
@@ -69,12 +63,10 @@ const LoginPage = () =>{
           
           
           
-          <div className=" w-[280px] md:w-[300px] h-auto flex ">
+          <div className=" w-[280px] md:w-[300px] h-auto flex pb-6">
             <div className={`w-full h-full flex bg-gray-100 flex-col   items-center rounded-lg shadow-md transition linear duration-040 flex-shrink-0`}>
               <h3 className=" text-xl mt-6 text-gray-500 font-bold">Login </h3>
-              <form onSubmit={handleSubmit} className=" text-amber-800 w-full mx-4 md:p-6 p-4 py-8 text-left text-sm ">
-                
-               
+              <form onSubmit={handleSubmit} className=" text-amber-800 w-full mx-4 md:px-6 px-4 pt-8 text-left text-sm ">
                 
                 <div className="flex items-center  my-4 border-2 bg-amber-500/5 border-amber-800/20 focus-within:border-amber-800  rounded gap-2 pl-2">
                   <Mail className="h-10" />
@@ -93,9 +85,24 @@ const LoginPage = () =>{
                 { error && <p className="text-center text-sm text-red-500">{error}</p>}
                 { loginerror && <p className="text-center mb-3 text-sm text-red-500">{loginerror}</p>}
                 <button className="w-full mb-3 bg-amber-800 hover:bg-amber-950 transition-all active:scale-95 py-2.5 rounded text-gray-100 font-medium">{isLoading ? <Loader className="animate-spin h-15 text-gray-100 mx-auto" /> : "Login"}</button>
-                <p className="text-center mt-4">Don't have an account? <Link to="/signup" className="text-blue-500 underline">Sign Up</Link></p>
+                <p className="text-center mt-2">Don't have an account? <Link to="/signup" className="text-blue-500 underline">Sign Up</Link></p>
+
               </form>
+              <div className='flex mt-4 items-center justify-center gap-5'>
+                <div className='w-[60px] bg-black h-[1.5px]'/>
+                <span>or</span>
+                <div className='w-[60px] bg-black h-[1.5px]'/>
+              </div>
+              <a href={googleLoginUrl} className='w-[230px] mt-3 mb-7 mx-4 md:mx-6 py-2 px-3 rounded-3xl border-2 border-black flex items-center justify-between'>
+                <img src={googleIcon} className='w-5'/>
+                <p className='font-mediumn'>Continue with Google</p>
+
+              </a>
+
+
             </div>
+
+            
             
             
           </div>

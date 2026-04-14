@@ -31,6 +31,8 @@ type Authstate = {
   ) => Promise<void>,
   logout: () => Promise<void>,
   checkAuth: () => Promise<void>,
+  googleAuth: () => Promise<void>,
+  verifyGoogleAuth: (code: string) => Promise<void>,
 }
 
 export const useAuthStore = create<Authstate>((set) => ({
@@ -109,7 +111,29 @@ export const useAuthStore = create<Authstate>((set) => ({
         set({ checkAuthError: errorMessage, isLoading: false, isAuthenticated: false });
       }
     },
-    
+    googleAuth: async() => {
+      set({ error: null })
+      try {
+        const response = await axios.get('/auth/google')
+        console.log("response", response)
+
+      } catch (error: any) {
+        console.log(error)
+      }
+
+    },
+    verifyGoogleAuth: async(code) =>{
+
+      try {
+        const res = await axios.post('/auth/verify-google', { code })
+        console.log("verify auth res", res.data)
+        set({ user: res.data, isAuthenticated: true })
+      } catch (error: any) {
+        console.log(error)
+        set({ user: null, isAuthenticated: false })
+      }
+  
+    }
     
 
     

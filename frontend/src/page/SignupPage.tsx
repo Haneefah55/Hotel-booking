@@ -6,6 +6,7 @@ import { User, Mail, Lock, Loader, Eye, EyeOff, CircleCheckBig, X } from "lucide
 import bg from '../assets/images/hero.png'
 import { Link } from 'react-router'
 import { useAuthStore } from "../store/authStore"
+import googleIcon from '../assets/images/google.png'
 
 import { useNavigate } from 'react-router'
 
@@ -21,6 +22,8 @@ const SignupPage = () =>{
   const [signuperror, setSignuperror] = useState('')
   
   const { signup, isLoading, error } = useAuthStore()
+
+  const googleLoginUrl = `${import.meta.env.VITE_API_URL}/auth/google`
   
   
   const navigate = useNavigate()
@@ -99,7 +102,7 @@ const SignupPage = () =>{
                 {role === "host" && <h3 className=" text-xl mt-6 text-gray-500 font-bold">Create A Host Account </h3>}
 
                 {role === "guest" && <h3 className=" text-xl mt-6 text-gray-500 font-bold">Create A Guest Account </h3>}
-                <form className=" text-amber-800 w-full mx-4 md:p-6 p-4 py-8 text-left text-sm " onSubmit={handleSubmit}>
+                <form className=" text-amber-800 w-full mx-4 md:px-6 px-4 py-2 text-left text-sm " onSubmit={handleSubmit}>
                   
                   <div className="flex items-center my-4 border-2 focus-within:border-amber-800 bg-amber-500/5 border-amber-800/10 rounded gap-2 pl-2">
                     <User className="h-10" />
@@ -126,6 +129,17 @@ const SignupPage = () =>{
                   <button className="w-full mb-3 bg-amber-800 hover:bg-amber-950 transition-all active:scale-95 py-2.5 rounded text-gray-100 font-medium">{isLoading ? <Loader className="animate-spin h-15 text-gray-100 mx-auto" /> : "Sign Up"}</button>
                   <p className="text-center mt-4">Already have an account? <Link to="/login" className="text-blue-500 underline">Login</Link></p>
                 </form>
+
+                <div className='flex mt-0 items-center justify-center gap-5'>
+                <div className='w-[60px] bg-black h-[1.5px]'/>
+                <span>or</span>
+                <div className='w-[60px] bg-black h-[1.5px]'/>
+              </div>
+              <a href={googleLoginUrl} className='w-[230px] mt-3 mb-7 mx-4 md:mx-6 py-2 px-3 rounded-3xl border-2 border-black flex items-center justify-between'>
+                <img src={googleIcon} className='w-5'/>
+                <p className='font-mediumn'>Continue with Google</p>
+
+              </a>
               </div>
               
               

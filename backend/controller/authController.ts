@@ -5,9 +5,10 @@ import cloudinary from "../utils/cloudinary.js"
 import User from "../model/userModel.js"
 import  generateTokenAndSetCookie from '../utils/generateToken.js'
 import type { freemem } from 'node:os'
-import axios from 'axios'
+import axios, { type responseEncoding } from 'axios'
 import { OAuth2Client } from 'google-auth-library'
 import { sendGuestWelcomeEmail, sendHostWelcomeEmail } from '../emailService/email.js'
+import { redis } from '../utils/redis.js'
 
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
@@ -220,7 +221,7 @@ export const checkAuth = async(
     res.status(200).json(userInfo)
   } catch (error: any) {
     console.log("error in checkauth controller", error.message)
-    res.status(400).json({ success: false, message: error.message })
+    res.status(500).json({ success: false, message: error.message })
     
   }
   
@@ -290,16 +291,12 @@ export const callback = async (req:Request, res:Response) => {
   
     await user.save()
 
-    generateTokenAndSetCookie(res, user._id, user.tokenVersion)
-     //console.log("accessToken", accessToken)
-    console.log("user login successfully")
-
     if (user.role === "guest"){
       await sendGuestWelcomeEmail(user.email, user.username, user.createdAt)
     } else if(user.role === "host") {
       await sendHostWelcomeEmail(user.email, user.username, user.createdAt)
     }
-    
+
     const userInfo = {
       id: user._id,
       email: user.email,
@@ -310,6 +307,21 @@ export const callback = async (req:Request, res:Response) => {
       createdAt: user.createdAt,
       role: user.role,
     }
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString()
+
+
+    const hashedcode = await bcrypt.hash(code, 10)
+    console.log("code", hashedcode)
+    const id = user._id.toString()
+
+    await redis.set(`auth_code: ${hashedcode}`, id, { ex: 60 }) //expires in 60 seconds
+   
+   
+  
+    const redirect_uri = `${process.env.CLIENT_URL}/google-callback?code=${hashedcode}` 
+    
+    res.redirect(redirect_uri)
 
     
   
@@ -331,3 +343,61 @@ export const callback = async (req:Request, res:Response) => {
     })
   }
 }
+
+export const verifyAuthCode = async (req: Request, res: Response) => {
+
+  const { code } = req.body
+
+  console.log("auth-code", code)
+
+  if(!code){
+    return res.status(400).json({ error: "no code provided" })
+  }
+
+  try {
+
+    const hashedcode = code
+    const key = `auth_code: ${hashedcode}`
+
+    const userId = await redis.get(key)
+
+    if(!userId) {
+      return res.status(400).json({ message: "Invalid or expired code" })
+    }
+
+
+    //delete key
+    await redis.del(key)
+
+    const user = await User.findById(userId)
+    if(!user) {
+      return res.status(404).json({ message: 'user not found' })
+    }
+    generateTokenAndSetCookie(res, user._id, user.tokenVersion)
+
+    console.log("user login successfully")
+
+    const userInfo = {
+      id: user._id,
+      email: user.email,
+      name: user.username,
+      lastLogin: user.lastLogin,
+      image: user.image,
+      isVerified: user.isVerified,
+      createdAt: user.createdAt,
+      role: user.role,
+    }
+  
+    res.status(200).json(userInfo)
+
+
+  } catch (error: any) {
+    console.error("Error in verify auth code contoller", error.message);
+    res.status(500).json({ 
+      success: false,
+      message: error.message
+    })
+  }
+  
+}
+

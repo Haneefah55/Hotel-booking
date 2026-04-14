@@ -1,6 +1,6 @@
 
 import express from 'express'
-import { logout,  checkAuth,  signup, login, authGoogle } from '../controller/authController.js'
+import { logout,  checkAuth,  signup, login, authGoogle, callback, verifyAuthCode } from '../controller/authController.js'
 import { adminRoute, protectRoute } from '../middleware/authMiddleware.js'
 
 
@@ -8,9 +8,15 @@ import { adminRoute, protectRoute } from '../middleware/authMiddleware.js'
 
 
 const router = express.Router()
-router.get('/', authGoogle)
+
 router.get('/', protectRoute, checkAuth)
+router.get('/google', authGoogle)
+router.get('/google/callback', callback)
+
+
+
 router.post('/signup', signup)
+router.post('/verify-google', verifyAuthCode)
 
 router.post('/login', login)
 
