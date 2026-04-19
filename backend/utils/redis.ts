@@ -8,6 +8,4 @@ export const redis = new Redis({
 }) 
 //await client.set('foo', 'bar');
 
-await redis.set("foo", "bar");
-await redis.get("foo");
 

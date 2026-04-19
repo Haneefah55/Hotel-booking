@@ -1,6 +1,6 @@
 
 import express from 'express'
-import { logout,  checkAuth,  signup, login, authGoogle, callback, verifyAuthCode } from '../controller/authController.js'
+import { logout,  checkAuth,  signup, login, authGoogle, callback, verifyAuthCode, selectRole } from '../controller/authController.js'
 import { adminRoute, protectRoute } from '../middleware/authMiddleware.js'
 
 
@@ -22,6 +22,7 @@ router.post('/login', login)
 
  
 router.post('/logout', protectRoute, logout)
+router.patch('/select-role', protectRoute, selectRole)
 
 
 

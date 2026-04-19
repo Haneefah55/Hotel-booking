@@ -15,6 +15,8 @@ import SingleHotel from './page/SingleHotel.jsx'
 import SingleRoom from './page/SingleRoom.jsx'
 import BookRoom from './page/BookRoom.jsx'
 import AdminLayout from './layouts/AdminLayout.jsx'
+import AuthCallbackPage from "./page/AuthCallbackPage.js";
+import SelectRole from "./component/SelectRole.js";
 
 
 
@@ -26,7 +28,7 @@ const App = () =>{
   
 
   const pathname= useLocation().pathname
-  const matchPaths = ['/login', '/signup', '/book'];
+  const matchPaths = ['/login', '/signup', '/book', '/google-callback', '/select-role'];
 
   const isMatch = matchPaths.some(path => pathname.includes(path));
   //const user = null
@@ -48,12 +50,13 @@ const App = () =>{
       <Routes>
         <Route path="/" element={<Homepage />} />
                  
-        <Route path="/login" element={<LoginPage />}/>
-        <Route path="/signup" element={<SignupPage />}/>
-        <Route path="/user/dashboard" element={<Dashboard />}/>
-        <Route path="/guest" element={<GuestLayout />}>
-          <Route  />
-        </Route>
+        <Route path="/login" element={ !user ? <LoginPage /> : <Navigate to={'/dashboard'} replace />} />
+        <Route path="/signup" element= { !user ? <SignupPage /> : <Navigate to={'/dashboard'} replace />} />
+        <Route path="/dashboard" element={ user ? <Dashboard /> : <Navigate to={'/login'} replace />} />
+  
+        <Route path="/google-callback" element={<AuthCallbackPage />}/>
+        <Route path="/select-role" element={ user ? <SelectRole /> : <Navigate to={'/login'} replace />} />
+       
 
 
         

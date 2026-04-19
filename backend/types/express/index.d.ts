@@ -11,6 +11,7 @@ interface User {
   isVerified: Boolean,
   createdAt: Date,
   role: string,
+  new: user.isNew
       
 }
 declare global {

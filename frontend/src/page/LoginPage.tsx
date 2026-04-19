@@ -13,7 +13,7 @@ import bg from '../assets/images/hero.png'
 
 const LoginPage = () =>{
 
-  const { login, isLoading, error, googleAuth } = useAuthStore()
+  const { login, isLoading, error } = useAuthStore()
   const navigate = useNavigate()
   const [isVisible, setIsVisible] = useState(false)
   const [email, setEmail] = useState('')

@@ -11,12 +11,14 @@ type User ={
   isVerified: Boolean,
   createdAt: Date,
   role: string,
+  new: Boolean
 }
 
 type Authstate = {
   user: User | null,
   isAuthenticated: Boolean,
   isLoading: Boolean,
+  isCheckingAuth: Boolean,
   error: string | null,
   checkAuthError: string | null,
   signup: (
@@ -31,8 +33,8 @@ type Authstate = {
   ) => Promise<void>,
   logout: () => Promise<void>,
   checkAuth: () => Promise<void>,
-  googleAuth: () => Promise<void>,
   verifyGoogleAuth: (code: string) => Promise<void>,
+  selectRole: () => Promise<void>,
 }
 
 export const useAuthStore = create<Authstate>((set) => ({
@@ -42,6 +44,7 @@ export const useAuthStore = create<Authstate>((set) => ({
     isLoading: false,
     error: null,
     checkAuthError: null,
+    isCheckingAuth: false,
     
     signup: async (username: string, email: string, password: string, role: string) =>{
       set({ isLoading: true, error: null })
@@ -66,11 +69,11 @@ export const useAuthStore = create<Authstate>((set) => ({
       try {
   
         const response = await axios.post(`/auth/login`, { email, password })
-        console.log("response", response)
+        console.log("response", response.data)
 
         const userData= response.data
   
-        set({ user: userData, isLoading: false, isAuthenticated: true })
+        set({ user: userData, isLoading: false, isAuthenticated: true, error: null })
         
       } catch (error: any) {
         console.log(error)
@@ -97,46 +100,47 @@ export const useAuthStore = create<Authstate>((set) => ({
     },
   
     checkAuth: async()  =>{
-      set({ error: null })
+      set({ error: null, isCheckingAuth: true })
       
       try {
         const response = await axios.get('/auth')
         console.log("response", response)
   
         
-        set({ user: response.data, isAuthenticated: true })
+        set({ user: response.data, isAuthenticated: true, isCheckingAuth: false })
         
       } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Error checking auth";
-        set({ checkAuthError: errorMessage, isLoading: false, isAuthenticated: false });
+        const errorMessage = error.response?.data?.message || "Something went wrong";
+        set({ checkAuthError: errorMessage, isLoading: false, isAuthenticated: false, isCheckingAuth: false });
       }
     },
-    googleAuth: async() => {
-      set({ error: null })
-      try {
-        const response = await axios.get('/auth/google')
-        console.log("response", response)
 
-      } catch (error: any) {
-        console.log(error)
-      }
 
-    },
     verifyGoogleAuth: async(code) =>{
-
+      set({ isLoading: true, error: null })
       try {
         const res = await axios.post('/auth/verify-google', { code })
         console.log("verify auth res", res.data)
-        set({ user: res.data, isAuthenticated: true })
+        set({ user: res.data, isAuthenticated: true, isLoading: false, error: null })
       } catch (error: any) {
         console.log(error)
-        set({ user: null, isAuthenticated: false })
+        const errorMessage = error.response.data.message || "Something went wrong ";
+        set({ user: null, isAuthenticated: false, error: errorMessage })
       }
   
+    },
+    selectRole: async() =>{
+      set({ isLoading: true, error: null })
+      try {
+        const response = await axios.patch('/auth/select-role')
+        console.log("selectRole", response.data)
+        set({ user: response.data, isAuthenticated: true, isLoading: false, error: null })
+      } catch (error: any) {
+        console.log(error)
+        const errorMessage = error.response.data.message || "Something went wrong ";
+        set({ user: null, isAuthenticated: false, error: errorMessage })
+      }
     }
-    
-
-    
   
   }),
  

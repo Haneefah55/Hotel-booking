@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { type } from 'node:os';
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -20,7 +21,8 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ["guest", "host", "admin"],
-    required: true
+    required: true,
+    default: "guest"
   },
   image: String,
   resetPasswordToken: String,
@@ -29,6 +31,9 @@ const userSchema = new mongoose.Schema({
   verificationTokenExpiresAt: Date,
   googleId: String,
   facebookId: String,
+  isNewUser: Boolean,
+  authCode: String,
+  authCodeExpiresAt: Date,
   lastLogin: {
     type: Date,
     default: Date.now,

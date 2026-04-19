@@ -34,6 +34,15 @@ const Dashboard = () =>{
       logout
 
      </button>
+     {user &&
+
+     <div>{user?.role}</div>
+     
+      }
+
+     <div>
+      
+     </div>
      
       
       

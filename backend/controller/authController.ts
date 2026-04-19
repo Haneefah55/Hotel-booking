@@ -41,6 +41,7 @@ interface AuthRequest extends Request {
     isVerified: Boolean,
     createdAt: Date,
     role: string,
+    new: Boolean
 
   }
 }
@@ -132,10 +133,10 @@ export const login = async (
     }
 
     await user.save()
-  
+    const userId = user._id.toString()
     
     //generateTokenAndSetCookie(res, user._id, user.tokenVersion)
-     generateTokenAndSetCookie(res, user._id, user.tokenVersion)
+     generateTokenAndSetCookie(res, userId, user.tokenVersion)
      //console.log("accessToken", accessToken)
     console.log("user login successfully")
     const userInfo = {
@@ -147,6 +148,7 @@ export const login = async (
       isVerified: user.isVerified,
       createdAt: user.createdAt,
       role: user.role,
+      new: user.isNewUser,
     }
 
     
@@ -276,59 +278,32 @@ export const callback = async (req:Request, res:Response) => {
         email,
         name,
         googleId,
-        
-
+        isNewUser: true,
       })
-
-      //await sendWelcomeEmail(user.email, user.name)
-
-      
+     
     } 
 
   
     user.isVerified = true
     user.lastLogin =  new Date()
   
-    await user.save()
-
-    if (user.role === "guest"){
-      await sendGuestWelcomeEmail(user.email, user.username, user.createdAt)
-    } else if(user.role === "host") {
-      await sendHostWelcomeEmail(user.email, user.username, user.createdAt)
-    }
-
-    const userInfo = {
-      id: user._id,
-      email: user.email,
-      name: user.username,
-      lastLogin: user.lastLogin,
-      image: user.image,
-      isVerified: user.isVerified,
-      createdAt: user.createdAt,
-      role: user.role,
-    }
-
     const code = Math.floor(100000 + Math.random() * 900000).toString()
-
-
     const hashedcode = await bcrypt.hash(code, 10)
-    console.log("code", hashedcode)
+
+    user.authCode = hashedcode
+    user.authCodeExpiresAt =  new Date(Date.now() + 60  * 1000) //expires at 60 sec
+    
+    await user.save()
+  
     const id = user._id.toString()
 
-    await redis.set(`auth_code: ${hashedcode}`, id, { ex: 60 }) //expires in 60 seconds
+    //await redis.set(`auth_code: ${hashedcode}`, id, { ex: 60 }) //expires in 60 seconds
    
    
   
     const redirect_uri = `${process.env.CLIENT_URL}/google-callback?code=${hashedcode}` 
     
     res.redirect(redirect_uri)
-
-    
-  
-    res.status(200).json(userInfo)
-
-   
-  
     
     
     
@@ -345,35 +320,38 @@ export const callback = async (req:Request, res:Response) => {
 }
 
 export const verifyAuthCode = async (req: Request, res: Response) => {
-
-  const { code } = req.body
-
-  console.log("auth-code", code)
-
-  if(!code){
-    return res.status(400).json({ error: "no code provided" })
-  }
-
   try {
+    const { code } = req.body
 
-    const hashedcode = code
+    console.log("auth-code", code)
+
+    /* const hashedcode = code
     const key = `auth_code: ${hashedcode}`
 
-    const userId = await redis.get(key)
-
+    const userId = await redis.get(key) */
+/* 
     if(!userId) {
       return res.status(400).json({ message: "Invalid or expired code" })
-    }
+    } */
 
 
     //delete key
-    await redis.del(key)
+    //await redis.del(key)
 
-    const user = await User.findById(userId)
+  
+    const user = await User.findOne({
+        authCode: code,
+        authCodeExpiresAt: { $gt: Date.now() },
+    })
     if(!user) {
       return res.status(404).json({ message: 'user not found' })
     }
-    generateTokenAndSetCookie(res, user._id, user.tokenVersion)
+
+
+    
+    
+    const userId = user._id.toString()
+    generateTokenAndSetCookie(res, userId, user.tokenVersion)
 
     console.log("user login successfully")
 
@@ -386,6 +364,7 @@ export const verifyAuthCode = async (req: Request, res: Response) => {
       isVerified: user.isVerified,
       createdAt: user.createdAt,
       role: user.role,
+      new: user.isNew
     }
   
     res.status(200).json(userInfo)
@@ -397,6 +376,45 @@ export const verifyAuthCode = async (req: Request, res: Response) => {
       success: false,
       message: error.message
     })
+  }
+  
+}
+
+export const selectRole = async (req: Request, res: Response) => {
+
+  try {
+    const id = req.user?.id
+
+    const user = await User.findById(id)
+    if(!user) {
+      return res.status(404).json({ message: 'user not found' })
+    }
+
+    user.role = "host"
+    user.isNewUser = false
+
+    await user.save()
+
+    const userInfo = {
+      id: user._id,
+      email: user.email,
+      name: user.username,
+      lastLogin: user.lastLogin,
+      image: user.image,
+      isVerified: user.isVerified,
+      createdAt: user.createdAt,
+      role: user.role,
+      new: user.isNew
+    }
+    res.status(200).json(userInfo)
+
+  } catch (error: any) {
+    console.error("Error in select-role contoller", error.message);
+    res.status(500).json({ 
+      success: false,
+      message: error.message
+    })
+    
   }
   
 }
