@@ -202,7 +202,7 @@ export const HOST_WELCOME_EMAIL_TEMP = `
     <meta name="view-port" content="width=device-width, initial-scale = 1.0"> 
    <title>Welcome to StayHub!</title> 
   </head>
-  <body style = "font-family: Poppins, sans-serif; margin: 0, auto; max-width: 600px; padding: 20px; color: #333;">
+  <body style = "font-family: Poppins, sans-serif; margin: 0, auto; max-width: 600px; padding: 20px; color: #ffffff;">
     <div style="text-align: center; padding: 20px;">
       <h1 style="color: #fff; margin: auto; font-size: 25px;">StayHub</h1>
     </div>

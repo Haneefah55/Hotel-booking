@@ -20,29 +20,18 @@ const Dashboard = () =>{
   ]
   const handleLogout = async() =>{
     await logout()
-    navigate('/')
+    navigate('/login')
     
   }
 
 
   return(
-    <div className="w-screen">
-     Welcome
-     {user?.name}
+    <div className="w-screen min-h-screen relative ">
+      {/* navbar */}
+      <div className='fixed top-0 left-0 w-full flex items-center py-2 justify-between px-5 md:px-16 lg:px-24 xl:px-32 transition-all duration-500 z-50 bg-amber-100'></div>
 
-     <button className='mt-36 ml-10 border-red-300 border-2' onClick={handleLogout}>
-      logout
-
-     </button>
-     {user &&
-
-     <div>{user?.role}</div>
-     
-      }
-
-     <div>
-      
-     </div>
+      <button className='mt-20 p-3 bg-amber-900 text-white' onClick={handleLogout}>logout</button>
+    
      
       
       

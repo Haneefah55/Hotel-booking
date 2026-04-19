@@ -18,7 +18,7 @@ const Navbar = () => {
   console.log("user", user)
 
  
- const username = user?.username
+ const username = user?.name
  
 
 // const [isLogin, setIsLogin] = useState(false)

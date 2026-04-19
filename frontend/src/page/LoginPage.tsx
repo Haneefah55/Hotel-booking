@@ -89,9 +89,9 @@ const LoginPage = () =>{
 
               </form>
               <div className='flex mt-4 items-center justify-center gap-5'>
-                <div className='w-[60px] bg-black h-[1.5px]'/>
+                <div className='w-[80px] bg-gray-900 h-[1.5px]'/>
                 <span>or</span>
-                <div className='w-[60px] bg-black h-[1.5px]'/>
+                <div className='w-[80px] bg-gray-900 h-[1.5px]'/>
               </div>
               <a href={googleLoginUrl} className='w-[230px] mt-3 mb-7 mx-4 md:mx-6 py-2 px-3 rounded-3xl border-2 border-black flex items-center justify-between'>
                 <img src={googleIcon} className='w-5'/>

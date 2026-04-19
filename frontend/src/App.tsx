@@ -25,10 +25,11 @@ const App = () =>{
 
   
   const { checkAuth, user, isAuthenticated } = useAuthStore()
+  console.log("user from app", user)
   
 
   const pathname= useLocation().pathname
-  const matchPaths = ['/login', '/signup', '/book', '/google-callback', '/select-role'];
+  const matchPaths = ['/'];
 
   const isMatch = matchPaths.some(path => pathname.includes(path));
   //const user = null
@@ -55,7 +56,7 @@ const App = () =>{
         <Route path="/dashboard" element={ user ? <Dashboard /> : <Navigate to={'/login'} replace />} />
   
         <Route path="/google-callback" element={<AuthCallbackPage />}/>
-        <Route path="/select-role" element={ user ? <SelectRole /> : <Navigate to={'/login'} replace />} />
+        <Route path="/select-role" element={ <SelectRole /> } />
        
 
 

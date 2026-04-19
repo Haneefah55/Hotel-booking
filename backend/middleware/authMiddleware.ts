@@ -27,18 +27,19 @@ export const protectRoute = async(req:Request, res:Response, next:NextFunction) 
     }
 
     const userInfo = {
-      id: user.id,
+      id: user._id.toString(),
       email: user.email,
-      name: user.username,
+      name: user.username!,
       lastLogin: user.lastLogin,
       image: user.image!,
       isVerified: user.isVerified,
       createdAt: user.createdAt,
       role: user.role,
+      new: user.isNewUser
     }
     
     
-    req.user = userInfo
+    req.user = userInfo!
     next()
      
   } catch (error: any) {

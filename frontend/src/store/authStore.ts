@@ -105,12 +105,13 @@ export const useAuthStore = create<Authstate>((set) => ({
       try {
         const response = await axios.get('/auth')
         console.log("response", response)
+        const userData = response.data
   
         
         set({ user: response.data, isAuthenticated: true, isCheckingAuth: false })
         
       } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Something went wrong";
+        const errorMessage = error.response?.data?.message || "error checking auth";
         set({ checkAuthError: errorMessage, isLoading: false, isAuthenticated: false, isCheckingAuth: false });
       }
     },
@@ -118,10 +119,13 @@ export const useAuthStore = create<Authstate>((set) => ({
 
     verifyGoogleAuth: async(code) =>{
       set({ isLoading: true, error: null })
+
       try {
         const res = await axios.post('/auth/verify-google', { code })
         console.log("verify auth res", res.data)
-        set({ user: res.data, isAuthenticated: true, isLoading: false, error: null })
+        console.log("auth verified")
+        const userData= res.data
+        set({ user: userData, isAuthenticated: true, isLoading: false, error: null })
       } catch (error: any) {
         console.log(error)
         const errorMessage = error.response.data.message || "Something went wrong ";
@@ -129,12 +133,15 @@ export const useAuthStore = create<Authstate>((set) => ({
       }
   
     },
+
     selectRole: async() =>{
       set({ isLoading: true, error: null })
       try {
         const response = await axios.patch('/auth/select-role')
         console.log("selectRole", response.data)
-        set({ user: response.data, isAuthenticated: true, isLoading: false, error: null })
+        console.log("role selected")
+        const userData= response.data
+        set({ user: userData, isAuthenticated: true, isLoading: false, error: null })
       } catch (error: any) {
         console.log(error)
         const errorMessage = error.response.data.message || "Something went wrong ";

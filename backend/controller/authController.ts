@@ -89,9 +89,9 @@ export const signup = async (
     await user.save()
 
     if (user.role === "guest"){
-      await sendGuestWelcomeEmail(user.email, user.username, user.createdAt)
+      await sendGuestWelcomeEmail(user.email, user.username!, user.createdAt)
     } else if(user.role === "host") {
-      await sendHostWelcomeEmail(user.email, user.username, user.createdAt)
+      await sendHostWelcomeEmail(user.email, user.username!, user.createdAt)
     }
 
     
@@ -126,7 +126,7 @@ export const login = async (
       return res.status(404).json({ success: false, message: "User not found" })
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password)
+    const isPasswordValid = await bcrypt.compare(password, user.password!)
 
     if(!isPasswordValid){
       return res.status(400).json({ success: false, message: "Incorrect password" })
@@ -217,6 +217,7 @@ export const checkAuth = async(
       isVerified: user.isVerified,
       createdAt: user.createdAt,
       role: user.role,
+      new: user.isNewUser,
     }
     
 
@@ -239,10 +240,10 @@ export const authGoogle = async (req: Request, res: Response) => {
 
 
 export const callback = async (req:Request, res:Response) => {
-  console.log(req.query)
+  //console.log(req.query)
 
   const code = req.query.code
-  console.log(code)
+  //console.log(code)
   
   try {
 
@@ -276,10 +277,12 @@ export const callback = async (req:Request, res:Response) => {
     if (!user) {
       user = await User.create({
         email,
-        name,
+        username: name,
         googleId,
         isNewUser: true,
       })
+
+
      
     } 
 
@@ -323,7 +326,9 @@ export const verifyAuthCode = async (req: Request, res: Response) => {
   try {
     const { code } = req.body
 
-    console.log("auth-code", code)
+    const id = req.user?.id
+
+    //console.log("auth-code", code)
 
     /* const hashedcode = code
     const key = `auth_code: ${hashedcode}`
@@ -344,16 +349,16 @@ export const verifyAuthCode = async (req: Request, res: Response) => {
         authCodeExpiresAt: { $gt: Date.now() },
     })
     if(!user) {
-      return res.status(404).json({ message: 'user not found' })
+      return res.status(404).json({ message: 'Something went wrong' })
     }
-
-
-    
-    
     const userId = user._id.toString()
     generateTokenAndSetCookie(res, userId, user.tokenVersion)
 
     console.log("user login successfully")
+
+    user.authCode = ""
+    user.authCodeExpiresAt = new Date(Date.now())
+
 
     const userInfo = {
       id: user._id,
@@ -364,7 +369,7 @@ export const verifyAuthCode = async (req: Request, res: Response) => {
       isVerified: user.isVerified,
       createdAt: user.createdAt,
       role: user.role,
-      new: user.isNew
+      new: user.isNewUser
     }
   
     res.status(200).json(userInfo)
@@ -395,6 +400,12 @@ export const selectRole = async (req: Request, res: Response) => {
 
     await user.save()
 
+    if (user.role === "host"){
+      await sendHostWelcomeEmail(user.email, user.username!, user.createdAt)
+    } else {
+      await sendGuestWelcomeEmail(user.email, user.username!, user.createdAt)
+    }
+
     const userInfo = {
       id: user._id,
       email: user.email,
@@ -404,7 +415,7 @@ export const selectRole = async (req: Request, res: Response) => {
       isVerified: user.isVerified,
       createdAt: user.createdAt,
       role: user.role,
-      new: user.isNew
+      new: user.isNewUser
     }
     res.status(200).json(userInfo)
 

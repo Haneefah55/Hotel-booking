@@ -1,4 +1,4 @@
-import { Building, CheckCircle, Luggage } from 'lucide-react'
+import { Building, CheckCircle, Loader, Luggage } from 'lucide-react'
 import React from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useAuthStore } from '../store/authStore'
@@ -7,6 +7,7 @@ const SelectRole = () => {
 
   const navigate = useNavigate()
   const { user, selectRole, isLoading } = useAuthStore()
+  console.log("user", user?.new)
 
   const handleSelectRole = async () => {
     await selectRole()
@@ -61,7 +62,7 @@ const SelectRole = () => {
             <CheckCircle size={15} color='#6b21a8'/>
             <span>Grow your revenue</span>
           </div>
-          <button onClick={handleSelectRole} className='bg-purple-800 mt-2 rounded-xl p-2 w-fit text-white font-medium hover:bg-purple-500 hover:text-gray-200 transition-all duration-300'>Become a Host</button>
+          <button onClick={handleSelectRole} className='bg-purple-800 mt-2 rounded-xl p-2 w-fit text-white font-medium hover:bg-purple-500 hover:text-gray-200 transition-all duration-300'>{isLoading ? <Loader size={20} className='animate-spin'/> : "Become a Host"}</button>
        
 
 

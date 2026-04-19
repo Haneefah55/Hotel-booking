@@ -11,27 +11,39 @@ const AuthCallbackPage = () => {
 
   const { user, verifyGoogleAuth, isLoading } = useAuthStore()
   const navigate = useNavigate()
+  console.log("user", user?.new)
 
   useEffect(() =>{
 
-  
-      verifyGoogleAuth(code!)
+    console.log("code", code)
+    verifyGoogleAuth(code!)
+    
 
-      if(user?.new === true){
-
-        navigate('/select-role')
-
-      } else {
-        navigate('/dashboard')
-      }
+    
 
   }, [code])
+
+  useEffect(() => {
+
+    if(!user) return
+    console.log("user", user)
+
+    if(user.new){
+
+      navigate('/select-role')
+
+    } else {
+      
+      navigate('/dashboard')
+    } 
+
+  }, [user])
 
   
   return (
     <div className='w-screen h-screen flex items-center justify-center flex-col gap-6 bg-white text-amber-800 '>
-      <h3>Authenticating</h3>
-      <Loader size={40} color='#92400e' className='animate-spin' />
+      <h3>Authenticating...</h3>
+      <Loader size={40} color='#92400e' className={`${isLoading ? "animate-spin" : ""}`} />
       
 
       

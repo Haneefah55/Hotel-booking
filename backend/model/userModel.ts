@@ -2,10 +2,7 @@ import mongoose from 'mongoose'
 import { type } from 'node:os';
 
 const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: [true, "Name is required"],
-  },
+  username: String,
   email: {
     type: String,
     required: [true, "Email is required"],
@@ -15,7 +12,6 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, "Password is required"],
     minLength: 6,
   },
   role: {
