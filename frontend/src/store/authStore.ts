@@ -108,7 +108,7 @@ export const useAuthStore = create<Authstate>((set) => ({
         const userData = response.data
   
         
-        set({ user: response.data, isAuthenticated: true, isCheckingAuth: false })
+        set({ user: userData, isAuthenticated: true, isCheckingAuth: false })
         
       } catch (error: any) {
         const errorMessage = error.response?.data?.message || "error checking auth";

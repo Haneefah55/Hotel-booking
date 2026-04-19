@@ -9,7 +9,7 @@ const AuthCallbackPage = () => {
   const code = urlParams.get('code');
   console.log("code", code)
 
-  const { user, verifyGoogleAuth, isLoading } = useAuthStore()
+  const { user, verifyGoogleAuth, isLoading, error } = useAuthStore()
   const navigate = useNavigate()
   console.log("user", user?.new)
 
@@ -42,8 +42,18 @@ const AuthCallbackPage = () => {
   
   return (
     <div className='w-screen h-screen flex items-center justify-center flex-col gap-6 bg-white text-amber-800 '>
-      <h3>Authenticating...</h3>
-      <Loader size={40} color='#92400e' className={`${isLoading ? "animate-spin" : ""}`} />
+      {!error &&
+      <div>
+        <h3>Authenticating...</h3>
+        <Loader size={40} color='#92400e' className={`${isLoading ? "animate-spin" : ""}`} />
+      </div>
+      }
+      
+
+      {
+        error &&
+        <div>{error}</div>
+      }
       
 
       
