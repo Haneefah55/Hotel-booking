@@ -326,8 +326,6 @@ export const verifyAuthCode = async (req: Request, res: Response) => {
   try {
     const { code } = req.body
 
-    const id = req.user?.id
-
     //console.log("auth-code", code)
 
     /* const hashedcode = code
