@@ -29,7 +29,7 @@ const App = () =>{
   
 
   const pathname= useLocation().pathname
-  const matchPaths = ['/'];
+  const matchPaths = ['/login'];
 
   const isMatch = matchPaths.some(path => pathname.includes(path));
   //const user = null
